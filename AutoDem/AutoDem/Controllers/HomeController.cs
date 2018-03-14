@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AutoDem.DAL;
+using AutoDem.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,6 +12,10 @@ namespace AutoDem.Controllers
     {
         public ActionResult Index()
         {
+            GenericUnitOfWork repository = new GenericUnitOfWork();
+
+            var result = repository.Repository<ApplicationRole>().GetAll();
+
             return View();
         }
 

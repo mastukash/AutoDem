@@ -29,6 +29,7 @@ namespace AutoDem.Models
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
+            Database.SetInitializer<ApplicationDbContext>(new AutoDemDatabaseInitializer());
         }
 
         public static ApplicationDbContext Create()
@@ -43,7 +44,5 @@ namespace AutoDem.Models
         public DbSet<MailMessage> MailMessages { get; set; }
         public DbSet<Model> Models { get; set; }
         public DbSet<PhotoAuto> PhotoAutos { get; set; }
-        public DbSet<ApplicationRole> ApplicationRoles { get; set; }
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     }
 }
