@@ -85,10 +85,10 @@
     <Compile Include="Brand.cs" />
     <Compile Include="Auto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\EFGenericRepository.cs" />
+    <Compile Include="Repository\IGenericRepository.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Repository\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
