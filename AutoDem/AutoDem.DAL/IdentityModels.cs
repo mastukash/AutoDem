@@ -1,11 +1,17 @@
 ﻿using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AutoDem.DAL;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace AutoDem.Models
 {
+    public class ApplicationRole : IdentityRole
+    {
+        public ApplicationRole() { }
+        public string Description { get; set; }
+    }
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit https://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser
     {
@@ -29,5 +35,15 @@ namespace AutoDem.Models
         {
             return new ApplicationDbContext();
         }
+        public DbSet<Auto> Autos { get; set; }
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<FuelType> FuelTypes { get; set; }
+        public DbSet<MailMessage> MailMessages { get; set; }
+        public DbSet<Model> Models { get; set; }
+        public DbSet<PhotoAuto> PhotoAutos { get; set; }
+        public DbSet<ApplicationRole> ApplicationRoles { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     }
 }
