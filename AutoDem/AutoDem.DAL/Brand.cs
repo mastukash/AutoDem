@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace AutoDem.DAL
 {
-    public class Class1
+    public class Brand
     {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public virtual List<Model> Models { get; set; }
     }
 }
