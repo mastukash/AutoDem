@@ -16,7 +16,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-6 col-xs-6">
-                            <div id="gtco-logo"><a href="index.html">Honest <em>.</em></a></div>
+                            <div id="gtco-logo">@Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })</div>
                         </div>
                         <div class="col-md-6 col-xs-6 social-icons">
                             <ul class="gtco-social-top">
@@ -26,7 +26,7 @@
                                 <li><a href="#"><i class="icon-instagram"></i></a></li>
                             </ul>
                         </div>
-                        @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                        
                     </div>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                 </div>
             </nav>
         </div>
-        <div class="container body-content">
+        <div class="container-fluid @*body-content*@">
             @RenderBody()
             <hr />
             <footer id="gtco-footer" role="contentinfo">
