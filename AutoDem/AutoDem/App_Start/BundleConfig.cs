@@ -26,6 +26,32 @@ namespace AutoDem
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+            bundles.Add(new StyleBundle("~/Content/index").Include(
+                "~/Content/animate.css",
+                 "~/Content/icomoon.css",
+                 "~/Content/themify-icons.css",
+                 "~/Content/magnific-popup.css",
+                 "~/Content/owl.carousel.min.css",
+                 "~/Content/owl.theme.default.min.css",
+                 "~/Content/style.css"
+                ));
+
+
+     
+            bundles.Add(new ScriptBundle("~/bundles/index").Include(
+                        //"~/Scripts/jquery.min.js",/*   "~/Scripts/bootstrap.min.js"*/,
+                        "~/Scripts/jquery.easing.1.3.js",
+                         "~/Scripts/jquery.waypoints.min.js",
+                         "~/Scripts/sticky.js",
+                         "~/Scripts/owl.carousel.min.js",
+                         "~/Scripts/jquery.countTo.js",
+                         "~/Scripts/jquery.stellar.min.js",
+                         "~/Scripts/jquery.magnific-popup.min.js",
+                         "~/Scripts/magnific-popup-options.js",
+                         "~/Scripts/main.js"
+                        ));
+
         }
     }
 }

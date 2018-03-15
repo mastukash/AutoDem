@@ -12,9 +12,9 @@ namespace AutoDem.Controllers
     {
         public ActionResult Index()
         {
-            GenericUnitOfWork repository = new GenericUnitOfWork();
+            //GenericUnitOfWork repository = new GenericUnitOfWork();
 
-            var result = repository.Repository<ApplicationRole>().GetAll();
+            //var result = repository.Repository<ApplicationRole>().GetAll();
 
             return View();
         }
