@@ -3,12 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AutoDem.DAL
 {
-    public class FuelType
+    public class TypeAuto
     {
         public int Id { get; set; }
         [Required]
-        [MaxLength(50)]
+        [MaxLength(25)]
         public string Name { get; set; }
-        public virtual List<Auto> Autos { get; set; }
+        public virtual List<Auto> Models { get; set; }
     }
 }
