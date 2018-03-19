@@ -7,6 +7,7 @@
     @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/index")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
 </head>
 <body>
 
@@ -36,19 +37,10 @@
                     <div class="row">
                         <div class="col-xs-12 text-center menu-1">
                             <ul>
-                                <li class="active">@Html.ActionLink("Home", "Index", "Home")</li>
-                                <li class="has-dropdown">
-                                    <a href="services.html">Services</a>
-                                    <ul class="dropdown">
-                                        <li><a href="#">Branding</a></li>
-                                        <li><a href="#">Development</a></li>
-                                        <li><a href="#">Web Design</a></li>
-                                        <li><a href="#">Marketing</a></li>
-                                    </ul>
-                                </li>
-                                <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                                <li>@Html.ActionLink("About", "About", "Home")</li>
-                                <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                                <li class="active">@Html.ActionLink("Головна", "Index", "Home")</li>
+                                <li>@Html.ActionLink("Автомобілі", "Index", "Autos")</li>
+                                <li>@Html.ActionLink("Послуги", "Index", "Services")</li>
+                                <li>@Html.ActionLink("Контакти", "Index", "Contacts")</li>
                             </ul>
                             @*@Html.Partial("_LoginPartial")*@
                         </div>
@@ -114,10 +106,7 @@
                 </div>
             </footer>
         </div>
-
-        @*@Scripts.Render("~/bundles/jquery")
-        @Scripts.Render("~/bundles/bootstrap")*@
-        @Scripts.Render("~/bundles/jquery")
+        
         @Scripts.Render("~/bundles/bootstrap")
         @Scripts.Render("~/bundles/index")
         @RenderSection("scripts", required: false)

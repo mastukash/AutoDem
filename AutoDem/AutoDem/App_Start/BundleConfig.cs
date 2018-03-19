@@ -11,6 +11,9 @@ namespace AutoDem
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/covervideo").Include(
+                        "~/Scripts/customjs/js_for_covervideo.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
 
@@ -36,9 +39,10 @@ namespace AutoDem
                  "~/Content/owl.theme.default.min.css",
                  "~/Content/style.css"
                 ));
+            
 
 
-     
+
             bundles.Add(new ScriptBundle("~/bundles/index").Include(
                         //"~/Scripts/jquery.min.js",/*   "~/Scripts/bootstrap.min.js"*/,
                         "~/Scripts/jquery.easing.1.3.js",
