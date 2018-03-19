@@ -1,17 +1,110 @@
-﻿@{
+﻿@model AutoDem.Models.ContactViewModel
+@{
     ViewBag.Title = "Contact";
 }
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+<div class="gtco-loader"></div>
 
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
+<div id="page">
 
-<address>
-    <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+    <div class="page-inner">
+
+
+        <header id="gtco-header" class="gtco-cover gtco-cover-sm" role="banner" style="background-image: url(/images/img_bg_3.jpg)" data-stellar-background-ratio="0.5">
+            <div class="overlay"></div>
+            <div class="gtco-container">
+                <div class="row row-mt-15em">
+                    <div class="col-md-7 mt-text text-left animate-box" data-animate-effect="fadeInUp">
+                        <h1>Get <strong>In Touch</strong></h1>
+                        <h2>Far far away, behind the word mountains, far from the countries Vokalia.</h2>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="gtco-section gtco-gray-bg">
+            <div class="gtco-container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-6 animate-box">
+                            <h3>Напишіть нам</h3>
+                            <style style="color:green" id="mstatus"></style>
+                            @using (Ajax.BeginForm("Contact", new AjaxOptions { HttpMethod = "POST", OnSuccess = "OnSuccess", OnFailure = "OnFailure" }))
+    {
+                        @Html.AntiForgeryToken()
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="sr-only" for="AuthorFName">Ім'я*</label>
+                                @Html.EditorFor(m => m.AuthorFName, new { htmlAttributes = new { @class = "form-control", placeholder = "Ваше ім'я" } })
+                                @Html.ValidationMessageFor(m => m.AuthorFName)
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="sr-only" for="AuthorLName">Прізвище</label>
+                                @Html.EditorFor(m => m.AuthorLName, new { htmlAttributes = new { @class = "form-control", placeholder = "Ваше прізвище" } })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="sr-only" for="Phone">Номер телефону*</label>
+                                @Html.EditorFor(m => m.Phone, new { htmlAttributes = new { @class = "form-control", placeholder = "Номер телефону" } })
+                                @Html.ValidationMessageFor(m => m.Phone)
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="sr-only" for="Email">Електронна пошта*</label>
+                                @Html.EditorFor(m => m.Email, new { htmlAttributes = new { @class = "form-control", placeholder = "Ваша ел. адреса" } })
+                                @Html.ValidationMessageFor(m => m.Email)
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="sr-only" for="Subject">Тема*</label>
+                                @Html.EditorFor(m => m.Subject, new { htmlAttributes = new { @class = "form-control", placeholder = "Тема повідомлення" } })
+                                @Html.ValidationMessageFor(m => m.Subject)
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="sr-only" for="Body">Повідомлення</label>
+                                @Html.TextAreaFor(model => model.Body, new { @class = "form-control", @cols = 30, @rows = 10, @placeholder = "Повідомлення" })
+                                @Html.ValidationMessageFor(m => m.Subject)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Send Message" class="btn btn-primary">
+                        </div>
+}
+                        </div>
+                        <div class="col-md-5 col-md-push-1 animate-box">
+
+                            <div class="gtco-contact-info">
+                                <h3>Contact Information</h3>
+                                <ul>
+                                    <li class="address">198 West 21th Street, <br> Suite 721 New York NY 10016</li>
+                                    <li class="phone"><a href="tel://1234567920">+ 1235 2355 98</a></li>
+                                    <li class="email"><a href="mailto:info@yoursite.com">info@yoursite.com</a></li>
+                                    <li class="url"><a href="http://GetTemplates.co">GetTemplates.co</a></li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="gototop js-top">
+    <a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
+</div>
+<script type="text/javascript">
+
+    function OnSuccess(data) {
+        document.getElementById("mstatus").innerHTML = data.message;
+    }
+    function OnFailure(data) {
+        alert("onFailure");
+    }
+</script>
