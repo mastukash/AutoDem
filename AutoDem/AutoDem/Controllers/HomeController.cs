@@ -41,8 +41,9 @@ namespace AutoDem.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return Json("error", JsonRequestBehavior.AllowGet);
             }
+
             MailMessage m = new MailMessage()
             {
                 Subject = model.Subject,

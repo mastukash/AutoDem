@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "Contact";
 }
+<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
 <div class="gtco-loader"></div>
 
@@ -27,8 +28,7 @@
                     <div class="col-md-12">
                         <div class="col-md-6 animate-box">
                             <h3>Напишіть нам</h3>
-                            <style style="color:green" id="mstatus"></style>
-                            @using (Ajax.BeginForm("Contact", new AjaxOptions { HttpMethod = "POST", OnSuccess = "OnSuccess", OnFailure = "OnFailure" }))
+                            @using (Ajax.BeginForm("Contact", "Home", null, new AjaxOptions { HttpMethod = "POST", OnSuccess = "OnSuccess", OnFailure = "OnFailure" }, null))
     {
                         @Html.AntiForgeryToken()
                         <div class="row form-group">
@@ -72,6 +72,7 @@
                                 @Html.ValidationMessageFor(m => m.Subject)
                             </div>
                         </div>
+                        <span style="color:green" id="mstatus"></span>
                         <div class="form-group">
                             <input type="submit" value="Send Message" class="btn btn-primary">
                         </div>
@@ -102,9 +103,11 @@
 <script type="text/javascript">
 
     function OnSuccess(data) {
+        document.getElementById("mstatus").style.color = "green";
         document.getElementById("mstatus").innerHTML = data.message;
     }
     function OnFailure(data) {
-        alert("onFailure");
+        document.getElementById("mstatus").style.color = "red";
+        document.getElementById("mstatus").innerHTML = data.message;
     }
 </script>
