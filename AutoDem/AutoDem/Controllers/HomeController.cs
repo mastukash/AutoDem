@@ -42,7 +42,7 @@ namespace AutoDem.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return Json("error", JsonRequestBehavior.AllowGet);
+                return View(model);
             }
 
             DAL.MailMessage m = new DAL.MailMessage()
@@ -70,6 +70,11 @@ namespace AutoDem.Controllers
             };
             string body = "<table>" +
                 "<tr>" +
+                $"<td> Email </td>" +
+                $"<td> <h3>{model.Email} </h3></td>" +
+                "</tr>" +
+                "<tr>" +
+                "<tr>" +
                 $"<td> Ім'я </td>" +
                 $"<td> {model.AuthorFName} </td>" +
                 "</tr>" +
@@ -77,11 +82,6 @@ namespace AutoDem.Controllers
                 $"<td> Прізвище </td>" +
                 $"<td> {model.AuthorLName} </td>" +
                 "</tr>" +
-                "<tr>" +
-                $"<td> Email </td>" +
-                $"<td> {model.Email} </td>" +
-                "</tr>" +
-                "<tr>" +
                 $"<td> Номер телефону</td>" +
                 $"<td> {model.Phone} </td>" +
                 "</tr>" +

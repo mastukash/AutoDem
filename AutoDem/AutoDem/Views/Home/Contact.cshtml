@@ -28,9 +28,10 @@
                     <div class="col-md-12">
                         <div class="col-md-6 animate-box">
                             <h3>Напишіть нам</h3>
-                            @using (Ajax.BeginForm("Contact", "Home", null, new AjaxOptions { HttpMethod = "POST", OnSuccess = "OnSuccess", OnFailure = "OnFailure" }, null))
+                            @using (Ajax.BeginForm("Contact", "Home", null, new AjaxOptions { HttpMethod = "POST", OnBegin = "OnBegin", OnSuccess = "OnSuccess", OnFailure = "OnFailure" }, null))
     {
                         @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
                         <div class="row form-group">
                             <div class="col-md-12">
                                 <label class="sr-only" for="AuthorFName">Ім'я*</label>
@@ -69,12 +70,13 @@
                             <div class="col-md-12">
                                 <label class="sr-only" for="Body">Повідомлення</label>
                                 @Html.TextAreaFor(model => model.Body, new { @class = "form-control", @cols = 30, @rows = 10, @placeholder = "Повідомлення" })
-                                @Html.ValidationMessageFor(m => m.Subject)
+                                @Html.ValidationMessageFor(m => m.Body)
                             </div>
                         </div>
                         <span style="color:green" id="mstatus"></span>
                         <div class="form-group">
                             <input type="submit" value="Send Message" class="btn btn-primary">
+                            <div style="display:inline-block;" id="sendloader"><img src="/images/loader.gif" alt="loader" style="width:50px;"></div>
                         </div>
 }
                         </div>
@@ -101,12 +103,17 @@
     <a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
 </div>
 <script type="text/javascript">
-
+    document.getElementById("sendloader").style.display = "none";
+    function OnBegin(data) {
+        document.getElementById("sendloader").style.display = "inline-block";
+    }
     function OnSuccess(data) {
+        document.getElementById("sendloader").style.display = "none";
         document.getElementById("mstatus").style.color = "green";
         document.getElementById("mstatus").innerHTML = data.message;
     }
     function OnFailure(data) {
+        document.getElementById("sendloader").style.display = "none";
         document.getElementById("mstatus").style.color = "red";
         document.getElementById("mstatus").innerHTML = data.message;
     }

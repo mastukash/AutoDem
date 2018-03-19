@@ -7,25 +7,25 @@ namespace AutoDem.Models
 {
     public class ContactViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Обов'язково заповнити")]
         [StringLength(50)]
         [Display(Name = "Тема")]
         public string Subject { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Обов'язково заповнити")]
         [Display(Name = "Повідомлення")]
         public string Body { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Обов'язково заповнити")]
         [Display(Name = "Ім'я")]
         public string AuthorFName { get; set; }
         [Display(Name = "Прізвище")]
         public string AuthorLName { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Обов'язково заповнити")]
         [Display(Name = "Електронна адреса")]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Некоректна адреса")]
         public string Email { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Обов'язково заповнити")]
         [Display(Name = "Номер телефону")]
-        [Phone]
+        [Phone(ErrorMessage = "Некоректний номер")]
         public string Phone { get; set; }
     }
 
