@@ -44,5 +44,7 @@ namespace AutoDem.Models
         public DbSet<MailMessage> MailMessages { get; set; }
         public DbSet<Model> Models { get; set; }
         public DbSet<PhotoAuto> PhotoAutos { get; set; }
+        public DbSet<TypeAuto> TypesAuto { get; set; }
+      
     }
 }

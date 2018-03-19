@@ -12,10 +12,8 @@ namespace AutoDem.DAL
         public int YearOfManufacture { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
-        //хешбек, седан...
-        public string Type { get; set; }
         public string Color { get; set; }
-        public DateTime DatePublication { get; set; }
+        public DateTime DatePublication { get; set; } = DateTime.Now;
         public int Mileage { get; set; }
         public double EngineCapacity { get; set; }
         //Привід
@@ -24,6 +22,8 @@ namespace AutoDem.DAL
         public string Transmission { get; set; }
         public bool SoldOut { get; set; }
         public virtual Model Model { get; set; }
+        //хешбек, седан...
+        public virtual TypeAuto Type { get; set; }
         public virtual FuelType FuelType { get; set; }
         public virtual Country Country { get; set; }
         public virtual List<AdditionalOption> AdditionalOptions { get; set; }
