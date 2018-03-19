@@ -31,7 +31,7 @@
                             @using (Ajax.BeginForm("Contact", "Home", null, new AjaxOptions { HttpMethod = "POST", OnBegin = "OnBegin", OnSuccess = "OnSuccess", OnFailure = "OnFailure" }, null))
     {
                         @Html.AntiForgeryToken()
-                        @Html.ValidationSummary(true)
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                         <div class="row form-group">
                             <div class="col-md-12">
                                 <label class="sr-only" for="AuthorFName">Ім'я*</label>
@@ -108,13 +108,16 @@
         document.getElementById("sendloader").style.display = "inline-block";
     }
     function OnSuccess(data) {
+        if (data.message != undefined)
+            document.getElementById("mstatus").innerHTML = data.message;
         document.getElementById("sendloader").style.display = "none";
         document.getElementById("mstatus").style.color = "green";
-        document.getElementById("mstatus").innerHTML = data.message;
+
     }
     function OnFailure(data) {
         document.getElementById("sendloader").style.display = "none";
         document.getElementById("mstatus").style.color = "red";
-        document.getElementById("mstatus").innerHTML = data.message;
+        if (data.message != undefined)
+            document.getElementById("mstatus").innerHTML = data.message;
     }
 </script>
