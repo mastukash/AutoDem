@@ -1,88 +1,63 @@
-﻿@model IEnumerable<AutoDem.DAL.Auto>
+﻿@model List<AutoDem.Models.AutoIndexViewModel>
 
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<header id="gtco-header" class="gtco-cover gtco-cover-sm" role="banner" style="background-image: url(/images/img_bg_4.jpg)" data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="gtco-container">
+        <div class="row row-mt-15em">
+            <div class="col-md-7 mt-text text-left animate-box" data-animate-effect="fadeInUp">
+                <h1>Наше <strong>Портфоліо</strong></h1>
+                <h2>Far far away, behind the word mountains, far from the countries Vokalia.</h2>
+            </div>
+        </div>
+    </div>
+</header>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.YearOfManufacture)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Price)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Color)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DatePublication)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Mileage)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.EngineCapacity)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Drive)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Transmission)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SoldOut)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.YearOfManufacture)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Price)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Color)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DatePublication)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Mileage)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EngineCapacity)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Drive)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Transmission)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SoldOut)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
 
-</table>
+
+<div class="gtco-section gtco-gray-bg">
+    <div class="gtco-container">
+        <div class="row">
+
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <div class="col-lg-4 col-md-4 col-sm-6">
+                    <a href="@(Url.Action("Details", "Autos", new {id = Model[i].Id}))" class="gtco-card-item">
+                        <figure>
+                            <div class="overlay"><i class="ti-plus"></i></div>
+                            <img src="@Model[i].PathToPhoto" alt="Image" class="img-responsive">
+                        </figure>
+                        <div class="gtco-text">
+                            <h2>@Model[i].Name</h2>
+                            <p>@Model[i].ShortDescription</p>
+                            <p class="gtco-category"><span>@Model[i].Country</span></p>@*, <span>Branding</span>, <span>Illustrator</span>*@
+                        </div>
+                    </a>
+                </div>
+            }
+
+            <div class="clearfix visible-lg-block visible-md-block"></div>
+            <div class="clearfix visible-sm-block"></div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="gtco-cover gtco-cover-sm" style="background-image: url(/images/img_bg_1.jpg)" data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="gtco-container text-center">
+        <div class="display-t">
+            <div class="display-tc">
+                <h1>Ми надаємо високоякісні послуги, які, точно, вам сподобаються!</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+ 

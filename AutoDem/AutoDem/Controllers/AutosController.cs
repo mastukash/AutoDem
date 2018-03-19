@@ -14,12 +14,28 @@ namespace AutoDem.Controllers
 {
     public class AutosController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private GenericUnitOfWork db = new GenericUnitOfWork();
 
         // GET: Autos
         public async Task<ActionResult> Index()
         {
-            return View(await db.Autos.ToListAsync());
+            List<AutoIndexViewModel> list = new List<AutoIndexViewModel>();
+
+            var tmp = await db.Repository<Auto>().GetAllAsync();
+
+            foreach (var item in tmp)
+            {
+                list.Add(new AutoIndexViewModel()
+                {
+                    Country = item.Country.Name,
+                    PathToPhoto = item.PhotoAutos.FirstOrDefault() == null ? "" : item.PhotoAutos.First().PathToPhoto,
+                    Name = item.Model.Name + " " + item.Type.Name + " " + item.YearOfManufacture,
+                    ShortDescription = (item.Description.Split().Take(15).Aggregate("", (a, b) => a + " " + b))+"...",
+                    Id = item.Id
+                });
+            }
+
+            return View(list);
         }
 
         // GET: Autos/Details/5
@@ -29,7 +45,7 @@ namespace AutoDem.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Auto auto = await db.Autos.FindAsync(id);
+            Auto auto = await db.Repository<Auto>().FindByIdAsync(id);
             if (auto == null)
             {
                 return HttpNotFound();
@@ -52,8 +68,8 @@ namespace AutoDem.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Autos.Add(auto);
-                await db.SaveChangesAsync();
+                db.Repository<Auto>().Add(auto);
+                await db.SaveAsync();
                 return RedirectToAction("Index");
             }
 
@@ -67,7 +83,7 @@ namespace AutoDem.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Auto auto = await db.Autos.FindAsync(id);
+            Auto auto = await db.Repository<Auto>().FindByIdAsync(id);
             if (auto == null)
             {
                 return HttpNotFound();
@@ -84,8 +100,8 @@ namespace AutoDem.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(auto).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                //db.Entry(auto).State = EntityState.Modified;
+                //await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(auto);
@@ -98,7 +114,7 @@ namespace AutoDem.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Auto auto = await db.Autos.FindAsync(id);
+            Auto auto = await db.Repository<Auto>().FindByIdAsync(id);
             if (auto == null)
             {
                 return HttpNotFound();
@@ -111,9 +127,9 @@ namespace AutoDem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Auto auto = await db.Autos.FindAsync(id);
-            db.Autos.Remove(auto);
-            await db.SaveChangesAsync();
+            Auto auto = await db.Repository<Auto>().FindByIdAsync(id);
+            db.Repository<Auto>().Remove(auto);
+            await db.SaveAsync();
             return RedirectToAction("Index");
         }
 
