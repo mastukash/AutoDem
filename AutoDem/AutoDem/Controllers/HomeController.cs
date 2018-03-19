@@ -21,14 +21,14 @@ namespace AutoDem.Controllers
 
         public ActionResult Services()
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "Наші послуги.";
 
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "Зв'яжіться із нами.";
 
             return View();
         }
