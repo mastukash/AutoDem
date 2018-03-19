@@ -1,4 +1,5 @@
-﻿@{
+﻿@model AutoDem.Models.ContactViewModel
+@{
     ViewBag.Title = "Contact";
 }
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
@@ -7,9 +8,9 @@
 <div id="page">
 
     <div class="page-inner">
-        
 
-        <header id="gtco-header" class="gtco-cover gtco-cover-sm" role="banner" style="background-image: url(images/img_bg_3.jpg)" data-stellar-background-ratio="0.5">
+
+        <header id="gtco-header" class="gtco-cover gtco-cover-sm" role="banner" style="background-image: url(/images/img_bg_3.jpg)" data-stellar-background-ratio="0.5">
             <div class="overlay"></div>
             <div class="gtco-container">
                 <div class="row row-mt-15em">
@@ -25,37 +26,56 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="col-md-6 animate-box">
-                            <h3>Get In Touch</h3>
-                            <form action="#">
-                                <div class="row form-group">
-                                    <div class="col-md-12">
-                                        <label class="sr-only" for="name">Name</label>
-                                        <input type="text" id="name" class="form-control" placeholder="Your firstname">
-                                    </div>
-
-                                </div>
-                                <div class="row form-group">
-                                    <div class="col-md-12">
-                                        <label class="sr-only" for="email">Email</label>
-                                        <input type="text" id="email" class="form-control" placeholder="Your email address">
-                                    </div>
-                                </div>
-                                <div class="row form-group">
-                                    <div class="col-md-12">
-                                        <label class="sr-only" for="subject">Subject</label>
-                                        <input type="text" id="subject" class="form-control" placeholder="Your subject of this message">
-                                    </div>
-                                </div>
-                                <div class="row form-group">
-                                    <div class="col-md-12">
-                                        <label class="sr-only" for="message">Message</label>
-                                        <textarea name="message" id="message" cols="30" rows="10" class="form-control" placeholder="Write us something"></textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <input type="submit" value="Send Message" class="btn btn-primary">
-                                </div>
-                            </form>
+                            <h3>Напишіть нам</h3>
+                            <style style="color:green" id="mstatus"></style>
+                            @using (Ajax.BeginForm("Contact", new AjaxOptions { HttpMethod = "POST", OnSuccess = "OnSuccess", OnFailure = "OnFailure" }))
+    {
+                        @Html.AntiForgeryToken()
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="sr-only" for="AuthorFName">Ім'я*</label>
+                                @Html.EditorFor(m => m.AuthorFName, new { htmlAttributes = new { @class = "form-control", placeholder = "Ваше ім'я" } })
+                                @Html.ValidationMessageFor(m => m.AuthorFName)
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="sr-only" for="AuthorLName">Прізвище</label>
+                                @Html.EditorFor(m => m.AuthorLName, new { htmlAttributes = new { @class = "form-control", placeholder = "Ваше прізвище" } })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="sr-only" for="Phone">Номер телефону*</label>
+                                @Html.EditorFor(m => m.Phone, new { htmlAttributes = new { @class = "form-control", placeholder = "Номер телефону" } })
+                                @Html.ValidationMessageFor(m => m.Phone)
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="sr-only" for="Email">Електронна пошта*</label>
+                                @Html.EditorFor(m => m.Email, new { htmlAttributes = new { @class = "form-control", placeholder = "Ваша ел. адреса" } })
+                                @Html.ValidationMessageFor(m => m.Email)
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="sr-only" for="Subject">Тема*</label>
+                                @Html.EditorFor(m => m.Subject, new { htmlAttributes = new { @class = "form-control", placeholder = "Тема повідомлення" } })
+                                @Html.ValidationMessageFor(m => m.Subject)
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="sr-only" for="Body">Повідомлення</label>
+                                @Html.TextAreaFor(model => model.Body, new { @class = "form-control", @cols = 30, @rows = 10, @placeholder = "Повідомлення" })
+                                @Html.ValidationMessageFor(m => m.Subject)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Send Message" class="btn btn-primary">
+                        </div>
+}
                         </div>
                         <div class="col-md-5 col-md-push-1 animate-box">
 
@@ -79,3 +99,12 @@
 <div class="gototop js-top">
     <a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
 </div>
+<script type="text/javascript">
+
+    function OnSuccess(data) {
+        document.getElementById("mstatus").innerHTML = data.message;
+    }
+    function OnFailure(data) {
+        alert("onFailure");
+    }
+</script>
