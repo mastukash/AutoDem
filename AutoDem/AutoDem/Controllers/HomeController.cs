@@ -42,6 +42,7 @@ namespace AutoDem.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ModelState.AddModelError("Phone", "Insufficient funds on the account");
                 return View(model);
             }
 
