@@ -45,93 +45,39 @@ namespace AutoDem.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Auto auto = await db.Repository<Auto>().FindByIdAsync(id);
+
             if (auto == null)
             {
                 return HttpNotFound();
             }
+
+            AutoDetailsViewModel details = new AutoDetailsViewModel()
+            {
+                Color = auto.Color,
+                Country = auto.Country.Name,
+                DatePublication = auto.DatePublication,
+                Description = auto.Description,
+                Drive = auto.Drive,
+                FuelType = auto.FuelType.Name,
+                Mileage = auto.Mileage,
+                ModelName = auto.Model.Name,
+                SoldOut = auto.SoldOut,
+                Price = auto.Price,
+                Transmission = auto.Transmission,
+                YearOfManufacture = auto.YearOfManufacture,
+                TypeAuto = auto.Type.Name,
+                EngineCapacity = auto.EngineCapacity,
+                PathToPhotos = auto.PhotoAutos.Select(x => x.PathToPhoto).ToList(),
+                AdditionalOptions = auto.AdditionalOptions.Select(x => x.characteristic).ToList(),
+                Comments = auto.Comments,
+                Id = auto.Id
+            };
+
             return View(auto);
         }
-
-        // GET: Autos/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Autos/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,YearOfManufacture,Description,Price,Color,DatePublication,Mileage,EngineCapacity,Drive,Transmission,SoldOut")] Auto auto)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Repository<Auto>().Add(auto);
-                await db.SaveAsync();
-                return RedirectToAction("Index");
-            }
-
-            return View(auto);
-        }
-
-        // GET: Autos/Edit/5
-        public async Task<ActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Auto auto = await db.Repository<Auto>().FindByIdAsync(id);
-            if (auto == null)
-            {
-                return HttpNotFound();
-            }
-            return View(auto);
-        }
-
-        // POST: Autos/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,YearOfManufacture,Description,Price,Color,DatePublication,Mileage,EngineCapacity,Drive,Transmission,SoldOut")] Auto auto)
-        {
-            if (ModelState.IsValid)
-            {
-                //db.Entry(auto).State = EntityState.Modified;
-                //await db.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
-            return View(auto);
-        }
-
-        // GET: Autos/Delete/5
-        public async Task<ActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Auto auto = await db.Repository<Auto>().FindByIdAsync(id);
-            if (auto == null)
-            {
-                return HttpNotFound();
-            }
-            return View(auto);
-        }
-
-        // POST: Autos/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id)
-        {
-            Auto auto = await db.Repository<Auto>().FindByIdAsync(id);
-            db.Repository<Auto>().Remove(auto);
-            await db.SaveAsync();
-            return RedirectToAction("Index");
-        }
+      
 
         protected override void Dispose(bool disposing)
         {
