@@ -22,11 +22,22 @@ namespace AutoDem.Controllers
             return View();
         }
 
-        public ActionResult Services()
+        public async Task<ActionResult> Services()
         {
-            ViewBag.Message = "Наші послуги.";
+            List<ServiceShowViewModel> list = new List<ServiceShowViewModel>();
 
-            return View();
+            var AllServices = await db.Repository<Service>().GetAllAsync();
+
+            foreach(var item in AllServices)
+            {
+                list.Add(new ServiceShowViewModel()
+                {
+                    Title = item.Title,
+                    Body = item.Body,
+                    Details = new List<string>(item.ServiceDetail.Select(x=>x.Name))
+                });
+            }
+            return View(list);
         }
 
         [HttpGet]

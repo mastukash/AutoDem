@@ -10,6 +10,6 @@ namespace AutoDem.DAL
     {
         public int Id { get; set; }
         public string characteristic { get; set; }
-        public virtual List<Auto> Autos { get; set; }
+        public virtual List<Auto> Autos { get; set; } = new List<Auto>();
     }
 }

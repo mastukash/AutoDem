@@ -78,6 +78,8 @@
     <Compile Include="AutoDemDatabaseInitializer.cs" />
     <Compile Include="GenericUnitOfWork.cs" />
     <Compile Include="IdentityModels.cs" />
+    <Compile Include="ServiceDetail.cs" />
+    <Compile Include="Service.cs" />
     <Compile Include="PhotoAuto.cs" />
     <Compile Include="MailMessage.cs" />
     <Compile Include="Comment.cs" />

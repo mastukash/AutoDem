@@ -33,7 +33,32 @@ namespace AutoDem.DAL
                 Name = "Хетчбек"
             };
 
+            var service1 = new Service()
+            {
+                Title = "Послуга 1",
+                Body = " Тут буде опис послуги 1....",
+                ServiceDetail = new List<ServiceDetail>()
+                {
+                    new ServiceDetail(){Name = "Робота 1"},
+                    new ServiceDetail(){Name = "Робота 2"},
+                    new ServiceDetail(){Name = "Робота 3"},
+                    new ServiceDetail(){Name = "Робота 4"}
+                },
+            };
 
+            var service2 = new Service()
+            {
+                Title = "Послуга 2",
+                Body = " Тут буде опис послуги 2....",
+                ServiceDetail = new List<ServiceDetail>()
+                {
+                    new ServiceDetail(){Name = "Робота 1"},
+                    new ServiceDetail(){Name = "Робота 2"},
+                    new ServiceDetail(){Name = "Робота 3"},
+                    new ServiceDetail(){Name = "Робота 4"}
+                },
+            };
+            context.Services.AddRange(new Service[] { service1, service2 });
             context.TypesAuto.AddRange(new TypeAuto[] { typeAuto1, typeAuto2, typeAuto3 });
             context.Roles.Add(RoleUser);
 

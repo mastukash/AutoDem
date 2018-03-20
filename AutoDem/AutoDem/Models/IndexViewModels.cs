@@ -29,4 +29,15 @@ namespace AutoDem.Models
         public string Phone { get; set; }
     }
 
+    public class ServiceShowViewModel
+    {
+        [StringLength(100)]
+        [Display(Name = "Заголовок")]
+        public string Title { get; set; }
+        [Display(Name = "Опис")]
+        public string Body { get; set; }
+        [Display(Name = "Деталі")]
+        public List<string> Details { get; set; }
+    }
+
 }
