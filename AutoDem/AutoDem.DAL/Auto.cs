@@ -26,9 +26,9 @@ namespace AutoDem.DAL
         public virtual TypeAuto Type { get; set; }
         public virtual FuelType FuelType { get; set; }
         public virtual Country Country { get; set; }
-        public virtual List<AdditionalOption> AdditionalOptions { get; set; }
-        public virtual List<Comment> Comments { get; set; }
-        public virtual List<PhotoAuto> PhotoAutos { get; set; }
+        public virtual List<AdditionalOption> AdditionalOptions { get; set; } = new List<AdditionalOption>();
+        public virtual List<Comment> Comments { get; set; } = new List<Comment>();
+        public virtual List<PhotoAuto> PhotoAutos { get; set; } = new List<PhotoAuto>();
 
     }
 }

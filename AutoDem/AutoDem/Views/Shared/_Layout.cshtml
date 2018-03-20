@@ -7,15 +7,15 @@
     @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/index")
     @Scripts.Render("~/bundles/modernizr")
-    @Scripts.Render("~/bundles/jquery")
+    
 </head>
 <body>
 
     <div class="page-inner">
-        <div id="head-top" style="position: absolute; width: 100%; top: 0; ">
+        <div id="head-top" style="position: absolute; width: 100%; top: 0;  ">
             <div class="gtco-top">
                 <div class="container-fluid">
-                    <div class="row">
+                    <div class="row" style="margin-right:0">
                         <div class="col-md-6 col-xs-6">
                             <div id="gtco-logo">@Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })</div>
                         </div>
@@ -27,14 +27,14 @@
                                 <li><a href="#"><i class="icon-instagram"></i></a></li>
                             </ul>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
             <nav class="gtco-nav sticky-banner" role="navigation">
                 <div class="gtco-container">
 
-                    <div class="row">
+                    <div class="row" >
                         <div class="col-xs-12 text-center menu-1">
                             <ul>
                                 <li class="active">@Html.ActionLink("Головна", "Index", "Home")</li>
@@ -106,9 +106,10 @@
                 </div>
             </footer>
         </div>
-        
-        @Scripts.Render("~/bundles/bootstrap")
-        @Scripts.Render("~/bundles/index")
-        @RenderSection("scripts", required: false)
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/index")
+    @RenderSection("scripts", required: false)
 </body>
 </html>

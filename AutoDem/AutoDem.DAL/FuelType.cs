@@ -9,6 +9,6 @@ namespace AutoDem.DAL
         [Required]
         [MaxLength(50)]
         public string Name { get; set; }
-        public virtual List<Auto> Autos { get; set; }
+        public virtual List<Auto> Autos { get; set; } = new List<Auto>();
     }
 }

@@ -2,6 +2,11 @@
 @{
     ViewBag.Title = "Contact";
 }
+<style>
+    .form-control {
+        display: inline-block;
+    }
+    </style>
 <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
 <div class="gtco-loader"></div>
@@ -28,58 +33,22 @@
                     <div class="col-md-12">
                         <div class="col-md-6 animate-box">
                             <h3>Напишіть нам</h3>
-                            @using (Ajax.BeginForm("Contact", "Home", null, new AjaxOptions { HttpMethod = "POST", OnBegin = "OnBegin", OnSuccess = "OnSuccess", OnFailure = "OnFailure" }, null))
-    {
-                        @Html.AntiForgeryToken()
-                               
-                        <div class="row form-group">
-                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                            <div class="col-md-12">
-                                <label class="sr-only" for="AuthorFName">Ім'я*</label>
-                                @Html.EditorFor(m => m.AuthorFName, new { htmlAttributes = new { @class = "form-control", placeholder = "Ваше ім'я" } })
-                                @Html.ValidationMessageFor(m => m.AuthorFName)
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-md-12">
-                                <label class="sr-only" for="AuthorLName">Прізвище</label>
-                                @Html.EditorFor(m => m.AuthorLName, new { htmlAttributes = new { @class = "form-control", placeholder = "Ваше прізвище" } })
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-md-12">
-                                <label class="sr-only" for="Phone">Номер телефону*</label>
-                                @Html.EditorFor(m => m.Phone, new { htmlAttributes = new { @class = "form-control", placeholder = "Номер телефону" } })
-                                @Html.ValidationMessageFor(m => m.Phone)
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-md-12">
-                                <label class="sr-only" for="Email">Електронна пошта*</label>
-                                @Html.EditorFor(m => m.Email, new { htmlAttributes = new { @class = "form-control", placeholder = "Ваша ел. адреса" } })
-                                @Html.ValidationMessageFor(m => m.Email)
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-md-12">
-                                <label class="sr-only" for="Subject">Тема*</label>
-                                @Html.EditorFor(m => m.Subject, new { htmlAttributes = new { @class = "form-control", placeholder = "Тема повідомлення" } })
-                                @Html.ValidationMessageFor(m => m.Subject)
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-md-12">
-                                <label class="sr-only" for="Body">Повідомлення</label>
-                                @Html.TextAreaFor(model => model.Body, new { @class = "form-control", @cols = 30, @rows = 10, @placeholder = "Повідомлення" })
-                                @Html.ValidationMessageFor(m => m.Body)
-                            </div>
-                        </div>
-                        <span style="color:green" id="mstatus"></span>
-                        <div class="form-group">
-                            <input type="submit" value="Send Message" class="btn btn-primary">
-                            <div style="display:inline-block;" id="sendloader"><img src="/images/loader.gif" alt="loader" style="width:50px;"></div>
-                        </div>
-}
+                            @using (Ajax.BeginForm("Contact", "Home", null, new AjaxOptions
+                            {
+                                HttpMethod = "POST",
+                                 
+                                UpdateTargetId = "myForm",
+                                OnBegin = "OnBegin",
+                                OnSuccess = "OnSuccess",
+                                OnFailure = "OnFailure" 
+                            }, new
+                            {
+                                id = "myForm"
+                            }))
+                            {
+                                @Html.Partial("_ContactForm");
+
+                            }
                         </div>
                         <div class="col-md-5 col-md-push-1 animate-box">
 
@@ -103,19 +72,4 @@
 <div class="gototop js-top">
     <a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
 </div>
-<script type="text/javascript">
-    document.getElementById("sendloader").style.display = "none";
-    function OnBegin(data) {
-        document.getElementById("sendloader").style.display = "inline-block";
-    }
-    function OnSuccess(data) {
-        document.getElementById("sendloader").style.display = "none";
-        document.getElementById("mstatus").style.color = "green";
-        document.getElementById("mstatus").innerHTML = data.message;
-    }
-    function OnFailure(data) {
-        document.getElementById("sendloader").style.display = "none";
-        document.getElementById("mstatus").style.color = "red";
-        document.getElementById("mstatus").innerHTML = data.message;
-    }
-</script>
+

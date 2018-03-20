@@ -22,11 +22,22 @@ namespace AutoDem.Controllers
             return View();
         }
 
-        public ActionResult Services()
+        public async Task<ActionResult> Services()
         {
-            ViewBag.Message = "Наші послуги.";
+            List<ServiceShowViewModel> list = new List<ServiceShowViewModel>();
 
-            return View();
+            var AllServices = await db.Repository<Service>().GetAllAsync();
+
+            foreach(var item in AllServices)
+            {
+                list.Add(new ServiceShowViewModel()
+                {
+                    Title = item.Title,
+                    Body = item.Body,
+                    Details = new List<string>(item.ServiceDetail.Select(x=>x.Name))
+                });
+            }
+            return View(list);
         }
 
         [HttpGet]
@@ -40,10 +51,16 @@ namespace AutoDem.Controllers
         [HttpPost]
         public async Task<ActionResult> Contact(ContactViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid) //data validation failed
             {
-                ModelState.AddModelError("Phone", "Insufficient funds on the account");
-                return View(model);
+                if (Request.IsAjaxRequest()) //was this request an AJAX request?
+                {
+                    return PartialView("_ContactForm"); //if it was AJAX, we only return RegisterForm.ascx.
+                }
+                else
+                {
+                    return View();
+                }
             }
 
             DAL.MailMessage m = new DAL.MailMessage()
@@ -69,27 +86,13 @@ namespace AutoDem.Controllers
                 Credentials = new System.Net.NetworkCredential(to, pass),
                 EnableSsl = true
             };
-            string body = "<table>" +
-                "<tr>" +
-                $"<td> Email </td>" +
-                $"<td> <h3>{model.Email} </h3></td>" +
-                "</tr>" +
-                "<tr>" +
-                "<tr>" +
-                $"<td> Ім'я </td>" +
-                $"<td> {model.AuthorFName} </td>" +
-                "</tr>" +
-                "<tr>" +
-                $"<td> Прізвище </td>" +
-                $"<td> {model.AuthorLName} </td>" +
-                "</tr>" +
-                $"<td> Номер телефону</td>" +
-                $"<td> {model.Phone} </td>" +
-                "</tr>" +
-                "<tr>" +
-                $"<td> Повідомлення</td>" +
-                $"<td> {model.Body} </td>" +
-                "</tr>" +
+            string body = 
+                "<table>" +
+                    "<tr>" + $"<td> Email </td>"         + $"<td> <h3>{model.Email} </h3></td>" + "</tr>" +
+                    "<tr>" + $"<td> Ім'я </td>"          + $"<td> {model.AuthorFName} </td>"    + "</tr>" +
+                    "<tr>" + $"<td> Прізвище </td>"      + $"<td> {model.AuthorLName} </td>"    + "</tr>" +
+                    "<tr>" + $"<td> Номер телефону</td>" + $"<td> {model.Phone} </td>"          + "</tr>" +               
+                    "<tr>" + $"<td> Повідомлення</td>"   + $"<td> {model.Body} </td>"           + "</tr>" +
                 $"</table>";
             var mail = new System.Net.Mail.MailMessage(model.Email,to)
             {
@@ -102,7 +105,14 @@ namespace AutoDem.Controllers
             await db.Repository<AutoDem.DAL.MailMessage>().AddAsync(m);
             await db.SaveAsync();
 
-            return Json(new { success = true,  message = "Повідомлення успішно надіслано" }, JsonRequestBehavior.AllowGet);
+            if (Request.IsAjaxRequest()) //was this request an AJAX request?
+            {
+                return PartialView("_ContactForm",model); //if it was AJAX, we only return RegisterForm.ascx.
+            }
+            else
+            {
+                return View(model);
+            }
         }
     }
 }
