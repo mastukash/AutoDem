@@ -12,10 +12,10 @@
 <body>
 
     <div class="page-inner">
-        <div id="head-top" style="position: absolute; width: 100%; top: 0; ">
+        <div id="head-top" style="position: absolute; width: 100%; top: 0;  ">
             <div class="gtco-top">
                 <div class="container-fluid">
-                    <div class="row">
+                    <div class="row" style="margin-right:0">
                         <div class="col-md-6 col-xs-6">
                             <div id="gtco-logo">@Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })</div>
                         </div>
@@ -34,7 +34,7 @@
             <nav class="gtco-nav sticky-banner" role="navigation">
                 <div class="gtco-container">
 
-                    <div class="row">
+                    <div class="row" >
                         <div class="col-xs-12 text-center menu-1">
                             <ul>
                                 <li class="active">@Html.ActionLink("Головна", "Index", "Home")</li>
