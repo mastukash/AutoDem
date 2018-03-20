@@ -7,7 +7,7 @@
     @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/index")
     @Scripts.Render("~/bundles/modernizr")
-    
+
 </head>
 <body>
 
@@ -34,7 +34,7 @@
             <nav class="gtco-nav sticky-banner" role="navigation">
                 <div class="gtco-container">
 
-                    <div class="row" >
+                    <div class="row">
                         <div class="col-xs-12 text-center menu-1">
                             <ul>
                                 <li class="active">@Html.ActionLink("Головна", "Index", "Home")</li>
@@ -107,9 +107,8 @@
             </footer>
         </div>
     </div>
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/index")
-    @RenderSection("scripts", required: false)
+
 </body>
 </html>
+
+@RenderSection("scripts", required: false)
