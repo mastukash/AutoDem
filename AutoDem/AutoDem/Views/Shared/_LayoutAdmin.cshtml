@@ -1,0 +1,218 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+    <link href="~/Content/Admin/brain-theme.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/Admin/styles.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    @*<link href="~/Content/Admin/font-awesome.min.css" rel="stylesheet" type="text/css">*@
+    <link href='http://fonts.googleapis.com/css?family=Cuprum' rel='stylesheet' type="text/css">
+
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+
+
+
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/uniform.min.js"></script>
+
+    @*<script type="text/javascript" src="~/Scripts/customjs/Admin/flot.js"></script>
+        <script type="text/javascript" src="~/Scripts/customjs/Admin/flot.orderbars.js"></script>
+        <script type="text/javascript" src="~/Scripts/customjs/Admin/flot.pie.js"></script>
+        <script type="text/javascript" src="~/Scripts/customjs/Admin/flot.time.js"></script>
+        <script type="text/javascript" src="~/Scripts/customjs/Admin/flot.animator.min.js"></script>
+        <script type="text/javascript" src="~/Scripts/customjs/Admin/excanvas.min.js"></script>
+        <script type="text/javascript" src="~/Scripts/customjs/Admin/flot.resize.min.js"></script>*@
+
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/uniform.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/select2.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/inputmask.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/autosize.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/inputlimit.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/listbox.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/multiselect.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/validate.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/tags.min.js"></script>
+
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/plupload.full.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/plupload.queue.min.js"></script>
+
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/wysihtml5.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/toolbar.js"></script>
+
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/jgrowl.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/datatables.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/prettify.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/fancybox.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/colorpicker.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/timepicker.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/fullcalendar.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/collapsible.min.js"></script>
+
+    <script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/customjs/Admin/application.js"></script>
+
+    @*<script type="text/javascript" src="~/Scripts/customjs/Admin/simple_graph.js"></script>*@
+
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <div class="hidden-lg pull-right">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-right">
+                        <span class="sr-only">Toggle navigation</span>
+                        <i class="fa fa-chevron-down"></i>
+                    </button>
+
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar">
+                        <span class="sr-only">Toggle sidebar</span>
+                        <i class="fa fa-bars"></i>
+                    </button>
+                </div>
+
+                <ul class="nav navbar-nav navbar-left-custom">
+                    <li class="user dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown">
+                            <img src="images/demo/users/face6.png" alt="">
+                            <span>Eugene Kopyov</span>
+                            <i class="caret"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#"><i class="fa fa-user"></i> Profile</a></li>
+                            <li><a href="#"><i class="fa fa-tasks"></i> Tasks</a></li>
+                            <li><a href="#"><i class="fa fa-cog"></i> Settings</a></li>
+                            <li><a href="#"><i class="fa fa-mail-forward"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                    <li><a class="nav-icon sidebar-toggle"><i class="fa fa-bars"></i></a></li>
+                </ul>
+            </div>
+
+            <ul class="nav navbar-nav navbar-right collapse" id="navbar-right">
+                <li>
+                    <a href="#">
+                        <i class="fa fa-rotate-right"></i>
+                        <span>Updates</span>
+                        <strong class="label label-danger">15</strong>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <i class="fa fa-comments"></i>
+                        <span>Messages</span>
+                        <strong class="label label-danger">7</strong>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <i class="fa fa-tasks"></i>
+                        <span>Notifications</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- /navbar -->
+    <!-- Switches -->
+    <div class="color-switch">
+        <a href="http://demo.interface.club/itsbrain/liquid/dark/index.html" title="Switch to dark verion"></a>
+    </div>
+
+    <div class="layout-switch">
+        <a href="http://demo.interface.club/itsbrain/fixed/light/index.html" title="Switch to fixed verion"></a>
+    </div>
+    @*<!-- /switches -->
+    <!-- Page header -->
+    <div class="container-fluid">
+        <div class="page-header">
+            <div class="logo"><a href="index.html" title=""><img src="images/logo.png" alt=""></a></div>
+            <ul class="middle-nav">
+                <li><a href="#" class="btn btn-default"><i class="fa fa-comments-o"></i> <span>Support tickets</span></a><div class="label label-info">9</div></li>
+                <li><a href="#" class="btn btn-default"><i class="fa fa-bars"></i> <span>Statistics</span></a></li>
+                <li><a href="#" class="btn btn-default"><i class="fa fa-male"></i> <span>User list</span></a></li>
+                <li><a href="#" class="btn btn-default"><i class="fa fa-money"></i> <span>Billing panel</span></a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- /page header -->*@
+
+
+
+
+
+
+
+
+    <!-- Page container -->
+    <div class="page-container container-fluid" style="margin-top:20px">
+
+        <!-- Sidebar -->
+        <div class="sidebar collapse" >
+            <ul class="navigation">
+                <li><a href="charts.html"><i class="fa fa-bar-chart-o"></i> Коментарі<span class="label label-danger">190</span></a></li>
+                <li>
+                    <a href="#" class="expand"><i class="fa fa-align-justify"></i>Авто</a>
+                    <ul>
+                        <li><a href="form_components.html">Список Автомобілів<span class="label label-danger">190</span></a></li>
+                        <li><a href="form_validation.html">Марки Автомобілів</a></li>
+                        <li><a href="wysiwyg.html">Моделі Автомобілів</a></li>
+                        <li><a href="form_layouts.html">Типи Автомобілів</a></li>
+                        <li><a href="form_grid.html">Типи палива</a></li>
+                        <li><a href="file_uploader.html">Країни</a></li>
+                        <li><a href="file_uploader.html">Додаткові обіції</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="expand"><i class="fa fa-tasks"></i> Повідомлення<span class="label label-danger">190</span></a>
+                    <ul>
+                        <li><a href="visuals.html">Прочитані<span class="label label-danger">190</span></a></li>
+                        <li><a href="navs.html">Не прочитані<span class="label label-danger">190</span></a></li>
+                        <li><a href="panel_options.html">Усі<span class="label label-danger">190</span></a></li>
+                    </ul>
+                </li>
+                 
+            </ul>
+        </div>
+        <!-- /sidebar -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        @RenderBody()
+
+
+
+    </div>
+        <hr />
+
+
+
+        <!-- Footer -->
+        <div class="footer">
+
+        </div>
+        <!-- /footer -->
+
+</body>
+</html>
+
+@RenderSection("scripts", required: false)
