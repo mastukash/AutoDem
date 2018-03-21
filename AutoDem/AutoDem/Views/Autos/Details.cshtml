@@ -1,4 +1,4 @@
-﻿@model AutoDem.DAL.Auto
+﻿@model AutoDem.Models.AutoDetailsViewModel
 
 @{
     ViewBag.Title = "Details";
@@ -41,26 +41,23 @@
                 <div class="flexslider">
 
                     <ul class="slides">
-                        <li data-thumb="/images/Autos/car1.jpg">
-                            <div class="thumb-image"> <img src="/images/Autos/car1.jpg" data-imagezoom="true" class="img-responsive"> </div>
-                        </li>
-                        <li data-thumb="/images/Autos/car2.jpg">
-                            <div class="thumb-image"> <img src="/images/Autos/car2.jpg" data-imagezoom="true" class="img-responsive"> </div>
-                        </li>
-                        <li data-thumb="/images/Autos/car3.jpg">
-                            <div class="thumb-image"> <img src="/images/Autos/car3.jpg" data-imagezoom="true" class="img-responsive"> </div>
-                        </li>
+                       @foreach (var i in Model.PathToPhotos)
+                       {
+                        <li data-thumb="@i">
+                            <div class="thumb-image"> <img src="@i" data-imagezoom="true" class="img-responsive"> </div>
+                       </li>
+                       }
                     </ul>
                     <div class="clearfix"></div>
                 </div>
             </div>
         </div>
         <div class="col-md-8 single-right-left simpleCart_shelfItem">
-            <h3>Назва автомобіля</h3>
-            <p><span class="item_price">$650</span> <del>- $900</del></p>
+            <h3>@(Model.BrandName + "  " + Model.ModelName + "  " + Model.YearOfManufacture)</h3>
+            <p><span class="item_price">$@Model.Price</span> <del>- $@(Model.Price * 1.2m)</del></p>
             <div class="description">
                 <h5>Опис автомобіля</h5>
-                <p>Тут буде детальний опис нашого автомобіля</p>
+                <p>@Model.Description</p>
                  
             </div>
         </div>
@@ -80,10 +77,16 @@
 
                         <div class="single_page_agile_its_w3ls">
                             <h6>Заголовок</h6>
-                            <p>Опис1</p>
-                            <p>Опис2</p>
-                            <p>Опис3</p>
-                            <p>Опис4</p>
+                                <p>@(Model.BrandName + "  " + Model.ModelName + "  " + Model.YearOfManufacture)</p>
+                                <p>Пробіг : @Model.Mileage</p>
+                                <p>Тип : @Model.TypeAuto</p>
+                                <p>Об'єм двигуна : @Model.EngineCapacity</p>
+                                <p>Тип Палива : @Model.FuelType</p>
+                                <p>Привід : @Model.Drive</p>
+                                <p>Коробка передач : @Model.Transmission</p>
+
+
+                                                  
                         </div>
                     </div>
                     <!--//tab_one-->
@@ -122,10 +125,10 @@
 
                         <div class="single_page_agile_its_w3ls">
                             <h6>Додаткова інформація</h6>
-                            <p>Дод. інфо 1</p>
-                            <p>Дод. інфо 2</p>
-                            <p>Дод. інфо 3</p>
-                            <p>Дод. інфо 4</p>
+                            @foreach (var i in Model.AdditionalOptions)
+                            {
+                                <p>@i</p>
+                            }
 
                         </div>
                     </div>
@@ -135,100 +138,87 @@
         <!-- //new_arrivals -->
         <!--/slider_owl-->
 
+
+
+
+        <div class="w3_agile_latest_arrivals">
+            <h3 class="wthree_text_info">Останні <span>Нові автомобілі</span></h3>
+
+            @foreach (var item in Model.LastNewCars)
+            {
+                <div class="col-md-3 product-men single">
+                    <div class="men-pro-item simpleCart_shelfItem">
+                        <div class="men-thumb-item">
+                            <img src="@item.PathToPhotos[0]" alt="" class="pro-image-front">
+                            <img src="@item.PathToPhotos[1]" alt="" class="pro-image-back">
+                            <div class="men-cart-pro">
+                                <div class="inner-men-cart-pro">
+                                    @Html.ActionLink("Переглянути", "Details", item.Id, new { @class = "link-product-add-cart" })
+                                </div>
+                            </div>
+                            <span class="product-new-top">New</span>
+
+                        </div>
+                        <div class="item-info-product ">
+                            <h4>@Html.ActionLink(item.Name, "Details", item.Id)</h4>
+                            <div class="info-product-price">
+                                <span class="item_price">$@(item.Price * 1.2m)</span>
+                                <del>$@item.Price</del>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="clearfix"> </div>
+
+        </div>
+
+
+
+
         <div class="w3_agile_latest_arrivals">
             <h3 class="wthree_text_info">Останні <span>Продані автомобілі</span></h3>
-            <div class="col-md-3 product-men single">
-                <div class="men-pro-item simpleCart_shelfItem">
-                    <div class="men-thumb-item">
-                        <img src="/images/Autos/car3.jpg" alt="" class="pro-image-front">
-                        <img src="/images/Autos/car3.jpg" alt="" class="pro-image-back">
-                        <div class="men-cart-pro">
-                            <div class="inner-men-cart-pro">
-                                <a href="single.html" class="link-product-add-cart">Переглянути</a>
-                            </div>
-                        </div>
-                        <span class="product-new-top">Sold</span>
-
-                    </div>
-                    <div class="item-info-product ">
-                        <h4><a href="single.html">Автомобіль 1</a></h4>
-                        <div class="info-product-price">
-                            <span class="item_price">$140.99</span>
-                            <del>$189.71</del>
-                        </div>
-                    </div>
-                </div>
-            </div>
             
-            <div class="col-md-3 product-men single">
-                <div class="men-pro-item simpleCart_shelfItem">
-                    <div class="men-thumb-item">
-                        <img src="/images/Autos/car3.jpg" alt="" class="pro-image-front">
-                        <img src="/images/Autos/car3.jpg" alt="" class="pro-image-back">
+                @foreach (var item in Model.LastSoldCars)
+                {
+                    <div class="col-md-3 product-men single">
+                        <div class="men-pro-item simpleCart_shelfItem">
+                            <div class="men-thumb-item">
+                                <img src="@item.PathToPhotos[0]" alt="" class="pro-image-front">
+                                <img src="@item.PathToPhotos[1]" alt="" class="pro-image-back">
                         <div class="men-cart-pro">
-                            <div class="inner-men-cart-pro">
-                                <a href="single.html" class="link-product-add-cart">Переглянути</a>
+                                    <div class="inner-men-cart-pro">
+                                        @Html.ActionLink("Переглянути","Details", item.Id, new { @class = "link-product-add-cart" })                               
+                                    </div>
+                                </div>
+                                <span class="product-new-top">Sold</span>
+
+                            </div>
+                            <div class="item-info-product ">
+                                <h4>@Html.ActionLink(item.Name, "Details", item.Id)</h4>
+                                <div class="info-product-price">
+                                    <span class="item_price">$@(item.Price * 1.2m)</span>
+                                    <del>$@item.Price</del>
+                                </div>
                             </div>
                         </div>
-                        <span class="product-new-top">Sold</span>
+                    </div>
+                }
 
-                    </div>
-                    <div class="item-info-product ">
-                        <h4><a href="single.html">Автомобіль 2</a></h4>
-                        <div class="info-product-price">
-                            <span class="item_price">$140.99</span>
-                            <del>$189.71</del>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 product-men single">
-                <div class="men-pro-item simpleCart_shelfItem">
-                    <div class="men-thumb-item">
-                        <img src="/images/Autos/car3.jpg" alt="" class="pro-image-front">
-                        <img src="/images/Autos/car3.jpg" alt="" class="pro-image-back">
-                        <div class="men-cart-pro">
-                            <div class="inner-men-cart-pro">
-                                <a href="single.html" class="link-product-add-cart">Переглянути</a>
-                            </div>
-                        </div>
-                        <span class="product-new-top">Sold</span>
-
-                    </div>
-                    <div class="item-info-product ">
-                        <h4><a href="single.html">Автомобіль 1</a></h4>
-                        <div class="info-product-price">
-                            <span class="item_price">$140.99</span>
-                            <del>$189.71</del>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 product-men single">
-                <div class="men-pro-item simpleCart_shelfItem">
-                    <div class="men-thumb-item">
-                        <img src="/images/Autos/car3.jpg" alt="" class="pro-image-front">
-                        <img src="/images/Autos/car3.jpg" alt="" class="pro-image-back">
-                        <div class="men-cart-pro">
-                            <div class="inner-men-cart-pro">
-                                <a href="single.html" class="link-product-add-cart">Переглянути</a>
-                            </div>
-                        </div>
-                        <span class="product-new-top">Sold</span>
-
-                    </div>
-                    <div class="item-info-product ">
-                        <h4><a href="single.html">Автомобіль 3</a></h4>
-                        <div class="info-product-price">
-                            <span class="item_price">$140.99</span>
-                            <del>$189.71</del>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="clearfix"> </div>
  
         </div>
+
+
+
+
+
+
+
+
+
+
     </div>
 </div>
  

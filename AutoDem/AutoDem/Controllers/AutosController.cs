@@ -53,6 +53,29 @@ namespace AutoDem.Controllers
                 return HttpNotFound();
             }
 
+            List<SoldNewAutoViewModel> soldAutos = new List<SoldNewAutoViewModel>();
+
+            (await db.Repository<Auto>().FindAllAsync(x => x.SoldOut == true)).OrderByDescending(x => x.DatePublication).Take(4).ToList().ForEach(x =>
+            soldAutos.Add(new SoldNewAutoViewModel()
+            {
+                Id = x.Id,
+                Name = $"{x.Model.Brand.Name}  {x.Model.Name} {x.YearOfManufacture}",
+                PathToPhotos = x.PhotoAutos.Count >= 2 ? x.PhotoAutos.Select(path => path.PathToPhoto).Take(2).ToList() : new List<string>(new string[] { x.PhotoAutos[0].PathToPhoto, x.PhotoAutos[0].PathToPhoto }),
+                Price = x.Price
+            }));
+
+
+            List<SoldNewAutoViewModel> newCars = new List<SoldNewAutoViewModel>();
+
+            (await db.Repository<Auto>().FindAllAsync(x => x.SoldOut == false)).OrderByDescending(x => x.DatePublication).Take(4).ToList().ForEach(x =>
+            newCars.Add(new SoldNewAutoViewModel()
+            {
+                Id = x.Id,
+                Name = $"{x.Model.Brand.Name}  {x.Model.Name} {x.YearOfManufacture}",
+                PathToPhotos = x.PhotoAutos.Count >= 2 ? x.PhotoAutos.Select(path => path.PathToPhoto).Take(2).ToList() : new List<string>(new string[] { x.PhotoAutos[0].PathToPhoto, x.PhotoAutos[0].PathToPhoto }),
+                Price = x.Price
+            }));
+
             AutoDetailsViewModel details = new AutoDetailsViewModel()
             {
                 Color = auto.Color,
@@ -62,6 +85,7 @@ namespace AutoDem.Controllers
                 Drive = auto.Drive,
                 FuelType = auto.FuelType.Name,
                 Mileage = auto.Mileage,
+                BrandName = auto.Model.Brand.Name,
                 ModelName = auto.Model.Name,
                 SoldOut = auto.SoldOut,
                 Price = auto.Price,
@@ -72,10 +96,12 @@ namespace AutoDem.Controllers
                 PathToPhotos = auto.PhotoAutos.Select(x => x.PathToPhoto).ToList(),
                 AdditionalOptions = auto.AdditionalOptions.Select(x => x.characteristic).ToList(),
                 Comments = auto.Comments,
-                Id = auto.Id
+                Id = auto.Id,
+                LastSoldCars = soldAutos,
+                LastNewCars = newCars
             };
 
-            return View(auto);
+            return View(details);
         }
       
 

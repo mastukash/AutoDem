@@ -15,6 +15,16 @@ namespace AutoDem.Models
         public string PathToPhoto { get; set; }
     }
 
+
+    public class SoldNewAutoViewModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+        public List<string> PathToPhotos { get; set; }
+    }
+
+
     public class AutoDetailsViewModel
     {
         public int Id { get; set; }
@@ -31,6 +41,8 @@ namespace AutoDem.Models
         public string Transmission { get; set; }
         public bool SoldOut { get; set; }
         public string ModelName { get; set; }
+        public string BrandName { get; set; }
+
         //хешбек, седан...
         public string TypeAuto { get; set; }
         public string FuelType { get; set; }
@@ -38,5 +50,8 @@ namespace AutoDem.Models
         public List<string> AdditionalOptions { get; set; }
         public List<Comment> Comments { get; set; }
         public List<string> PathToPhotos { get; set; }
+        public List<SoldNewAutoViewModel> LastSoldCars { get; set; }
+        public List<SoldNewAutoViewModel> LastNewCars { get; set; }
+
     }
 }
