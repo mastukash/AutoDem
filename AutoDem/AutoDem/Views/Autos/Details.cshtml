@@ -14,6 +14,8 @@
 <link href="~/Content/Auto/auto_style.css" rel="stylesheet" type="text/css" media="all" />
 <link href="~/Content/Auto/auto_font-awesome.css" rel="stylesheet">
 <link href="~/Content/Auto/auto_easy-responsive-tabs.css" rel='stylesheet' type='text/css' />
+@*<link href="~/Content/bootstrap-rating.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-rating/bootstrap-rating.min.js"></script>*@
 <!-- //for bootstrap working -->
 <link href="//fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800" rel="stylesheet">
 <link href='//fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,900,900italic,700italic' rel='stylesheet' type='text/css'>
@@ -77,48 +79,43 @@
 
                         <div class="single_page_agile_its_w3ls">
                             <h6>Заголовок</h6>
-                                <p>@(Model.BrandName + "  " + Model.ModelName + "  " + Model.YearOfManufacture)</p>
-                                <p>Пробіг : @Model.Mileage</p>
-                                <p>Тип : @Model.TypeAuto</p>
-                                <p>Об'єм двигуна : @Model.EngineCapacity</p>
-                                <p>Тип Палива : @Model.FuelType</p>
-                                <p>Привід : @Model.Drive</p>
-                                <p>Коробка передач : @Model.Transmission</p>
+                            <p>@(Model.BrandName + "  " + Model.ModelName + "  " + Model.YearOfManufacture)</p>
+                            <p>Пробіг : @Model.Mileage</p>
+                            <p>Тип : @Model.TypeAuto</p>
+                            <p>Об'єм двигуна : @Model.EngineCapacity</p>
+                            <p>Тип Палива : @Model.FuelType</p>
+                            <p>Привід : @Model.Drive</p>
+                            <p>Коробка передач : @Model.Transmission</p>
 
 
-                                                  
+
                         </div>
                     </div>
                     <!--//tab_one-->
                     <div class="tab2">
 
                         <div class="single_page_agile_its_w3ls">
-                            <div class="bootstrap-tab-text-grids">
-                                <div class="bootstrap-tab-text-grid">
-                                    <div class="bootstrap-tab-text-grid-left">
-                                        <img src="/images/Autos/car3.jpg" alt=" " class="img-responsive">
-                                    </div>
-                                    <div class="bootstrap-tab-text-grid-right">
-                                        <ul>
-                                            <li><a href="#">Користувач</a></li>
-                                        </ul>
-                                        <p>
-                                           Неймовірний коментар від когось...
-                                        </p>
-                                    </div>
-                                    <div class="clearfix"> </div>
-                                </div>
-                                <div class="add-review">
-                                    <h4>Добавити відгук</h4>
-                                    <form action="#" method="post">
-                                        <input type="text" name="Name" size="200" placeholder="Ім'я">
-                                        <input type="email" name="Email" size="100" placeholder="Пошта"><br>
-                                        <textarea   placeholder="Повідомлення" cols="200"></textarea><br>
-                                        <input type="submit" value="Надіслати">
-                                    </form>
-                                </div>
-                            </div>
 
+                            @foreach (var comm in Model.Comments)
+                            {
+                        <div class="bootstrap-tab-text-grids">
+                            <div class="bootstrap-tab-text-grid">
+                                <div class="bootstrap-tab-text-grid-left">
+                                    <img src="/images/avatar.png" alt=" " class="img-responsive">
+                                </div>
+                                <div class="bootstrap-tab-text-grid-right">
+                                    <ul>
+                                        <li><a href="#">@comm.AuthorName</a></li>
+                                        @*<li>Рейтинг : @Html.BootstrapRating(m => (double)(comm.Rating))</li>*@
+                                    </ul>
+                                    <p>
+                                        @comm.Body
+                                    </p>
+                                </div>
+                                <div class="clearfix"> </div>
+                            </div>
+                        </div>
+                            }
                         </div>
                     </div>
                     <div class="tab3">
@@ -127,22 +124,33 @@
                             <h6>Додаткова інформація</h6>
                             @foreach (var i in Model.AdditionalOptions)
                             {
-                                <p>@i</p>
+                        <p>@i</p>
                             }
 
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- //new_arrivals -->
-        <!--/slider_owl-->
+            <div class="add-review">
+                <h4>Добавити відгук</h4>
+                @using (Html.BeginForm("Comment", "Autos", FormMethod.Post))
+                {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
+            <input type="text" name="AuthorFName" id="AuthorFName" placeholder="Ім'я" style="max-width:100%">
+            <input type="email" name="Email" id="Email" size="100" placeholder="Пошта" style="max-width:100%"><br>
+            <textarea name="Body" id="Body" placeholder="Повідомлення" cols="200" style="max-width:100%"></textarea><br>
+            <input type="hidden" name="IdAuto" id="IdAuto" value="@Model.Id">
+            <input type="submit" value="Надіслати">
+                }
+            </div>
+        </div>
 
 
 
         <div class="w3_agile_latest_arrivals">
-            <h3 class="wthree_text_info">Останні <span>Нові автомобілі</span></h3>
+            <h3 class="wthree_text_info">Нові <span> автомобілі</span></h3>
 
             @foreach (var item in Model.LastNewCars)
             {
@@ -302,7 +310,7 @@
             };
         */
 
-        $().UItoTop({ easingType: 'easeOutQuart' });
+         
 
     });
 </script>

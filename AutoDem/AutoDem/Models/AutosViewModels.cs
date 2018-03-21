@@ -1,6 +1,7 @@
 ﻿using AutoDem.DAL;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -53,5 +54,18 @@ namespace AutoDem.Models
         public List<SoldNewAutoViewModel> LastSoldCars { get; set; }
         public List<SoldNewAutoViewModel> LastNewCars { get; set; }
 
+    }
+    public class CommentViewModel
+    {
+        [Display(Name = "Ім'я")]
+        public string AuthorFName { get; set; }
+        [Required(ErrorMessage = "Обов'язково заповнити")]
+        [Display(Name = "Електронна адреса")]
+        [EmailAddress(ErrorMessage = "Некоректна адреса")]
+        public string Email { get; set; }
+        [Required(ErrorMessage = "Обов'язково заповнити")]
+        [Display(Name = "Повідомлення")]
+        public string Body { get; set; }
+        public int IdAuto { get; set; }
     }
 }

@@ -40,4 +40,5 @@ namespace AutoDem.Models
         public List<string> Details { get; set; }
     }
 
+
 }

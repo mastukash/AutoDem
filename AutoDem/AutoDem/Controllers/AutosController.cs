@@ -112,8 +112,31 @@ namespace AutoDem.Controllers
 
             return View(details);
         }
-      
 
+        [HttpPost]
+        public async Task<ActionResult> Comment(CommentViewModel model)
+        {
+            
+            if (!ModelState.IsValid) //data validation failed
+            {
+                return View();
+            }
+
+            DAL.Comment comm = new Comment()
+            {
+                AuthorName = model.AuthorFName,
+                Email = model.Email,
+                Body = model.Body,
+                Auto = await db.Repository<Auto>().FindByIdAsync(model.IdAuto)
+            };
+
+            await db.Repository<Comment>().AddAsync(comm);
+            await db.SaveAsync();
+
+
+            return View();
+
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
