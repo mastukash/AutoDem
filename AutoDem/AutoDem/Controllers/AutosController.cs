@@ -55,26 +55,35 @@ namespace AutoDem.Controllers
 
             List<SoldNewAutoViewModel> soldAutos = new List<SoldNewAutoViewModel>();
 
-            (await db.Repository<Auto>().FindAllAsync(x => x.SoldOut == true)).OrderByDescending(x => x.DatePublication).Take(4).ToList().ForEach(x =>
-            soldAutos.Add(new SoldNewAutoViewModel()
-            {
-                Id = x.Id,
-                Name = $"{x.Model.Brand.Name}  {x.Model.Name} {x.YearOfManufacture}",
-                PathToPhotos = x.PhotoAutos.Count >= 2 ? x.PhotoAutos.Select(path => path.PathToPhoto).Take(2).ToList() : new List<string>(new string[] { x.PhotoAutos[0].PathToPhoto, x.PhotoAutos[0].PathToPhoto }),
-                Price = x.Price
-            }));
+            var list = (await db.Repository<Auto>().FindAllAsync(x => x.SoldOut == true)).OrderByDescending(x => x.DatePublication).Take(4).ToList();
 
+            foreach (var x in list)
+            {
+                soldAutos.Add(new SoldNewAutoViewModel()
+                {
+                    Id = x.Id,
+                    Name = $"{x.Model.Brand.Name}  {x.Model.Name} {x.YearOfManufacture}",
+                    PathToPhotos = x.PhotoAutos.Count >= 2 ? x.PhotoAutos.Select(path => path.PathToPhoto).Take(2).ToList() : new List<string>(new string[] { x.PhotoAutos[0].PathToPhoto, x.PhotoAutos[0].PathToPhoto }),
+                    Price = x.Price
+                });
+
+            }
 
             List<SoldNewAutoViewModel> newCars = new List<SoldNewAutoViewModel>();
 
-            (await db.Repository<Auto>().FindAllAsync(x => x.SoldOut == false)).OrderByDescending(x => x.DatePublication).Take(4).ToList().ForEach(x =>
-            newCars.Add(new SoldNewAutoViewModel()
+            list = (await db.Repository<Auto>().FindAllAsync(x => x.SoldOut == false)).OrderByDescending(x => x.DatePublication).Take(4).ToList();
+
+            foreach (var x in list)
             {
-                Id = x.Id,
-                Name = $"{x.Model.Brand.Name}  {x.Model.Name} {x.YearOfManufacture}",
-                PathToPhotos = x.PhotoAutos.Count >= 2 ? x.PhotoAutos.Select(path => path.PathToPhoto).Take(2).ToList() : new List<string>(new string[] { x.PhotoAutos[0].PathToPhoto, x.PhotoAutos[0].PathToPhoto }),
-                Price = x.Price
-            }));
+                newCars.Add(new SoldNewAutoViewModel()
+                {
+                    Id = x.Id,
+                    Name = $"{x.Model.Brand.Name}  {x.Model.Name} {x.YearOfManufacture}",
+                    PathToPhotos = x.PhotoAutos.Count >= 2 ? x.PhotoAutos.Select(path => path.PathToPhoto).Take(2).ToList() : new List<string>(new string[] { x.PhotoAutos[0].PathToPhoto, x.PhotoAutos[0].PathToPhoto }),
+                    Price = x.Price
+                });
+            }
+
 
             AutoDetailsViewModel details = new AutoDetailsViewModel()
             {

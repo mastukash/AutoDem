@@ -153,14 +153,14 @@
                             <img src="@item.PathToPhotos[1]" alt="" class="pro-image-back">
                             <div class="men-cart-pro">
                                 <div class="inner-men-cart-pro">
-                                    @Html.ActionLink("Переглянути", "Details", item.Id, new { @class = "link-product-add-cart" })
+                                    @Html.ActionLink("Переглянути", "Details", new { id = item.Id }, new { @class = "link-product-add-cart" })
                                 </div>
                             </div>
                             <span class="product-new-top">New</span>
 
                         </div>
                         <div class="item-info-product ">
-                            <h4>@Html.ActionLink(item.Name, "Details", item.Id)</h4>
+                            <h4>@Html.ActionLink(item.Name, "Details", new { id = item.Id })</h4>
                             <div class="info-product-price">
                                 <span class="item_price">$@(item.Price * 1.2m)</span>
                                 <del>$@item.Price</del>
@@ -189,14 +189,14 @@
                                 <img src="@item.PathToPhotos[1]" alt="" class="pro-image-back">
                         <div class="men-cart-pro">
                                     <div class="inner-men-cart-pro">
-                                        @Html.ActionLink("Переглянути","Details", item.Id, new { @class = "link-product-add-cart" })                               
+                                        @Html.ActionLink("Переглянути","Details",new { id = item.Id }, new { @class = "link-product-add-cart" })                               
                                     </div>
                                 </div>
                                 <span class="product-new-top">Sold</span>
 
                             </div>
                             <div class="item-info-product ">
-                                <h4>@Html.ActionLink(item.Name, "Details", item.Id)</h4>
+                                <h4>@Html.ActionLink(item.Name, "Details", new { id = item.Id })</h4>
                                 <div class="info-product-price">
                                     <span class="item_price">$@(item.Price * 1.2m)</span>
                                     <del>$@item.Price</del>
