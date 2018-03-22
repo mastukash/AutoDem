@@ -66,7 +66,7 @@ namespace AutoDem.Controllers
             await unitOfWork.Repository<Comment>().RemoveAsync(comment);
             await unitOfWork.SaveAsync();
 
-            return Json(new { Success = true});
+            return Json(new { Success = true });
         }
 
 
