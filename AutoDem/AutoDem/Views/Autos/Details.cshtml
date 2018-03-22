@@ -1,10 +1,12 @@
 ﻿@model AutoDem.Models.AutoDetailsViewModel
+@using CaptchaMvc.HtmlHelpers
 
 @{
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <script type="text/javascript" src="~/Scripts/customjs/auto_jquery-2.1.4.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
 <script type="application/x-javascript">
     addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false);
            function hideURLbar(){ window.scrollTo(0,1); } </script>
@@ -15,7 +17,7 @@
 <link href="~/Content/Auto/auto_font-awesome.css" rel="stylesheet">
 <link href="~/Content/Auto/auto_easy-responsive-tabs.css" rel='stylesheet' type='text/css' />
 @*<link href="~/Content/bootstrap-rating.css" rel="stylesheet" />
-<script src="~/Scripts/bootstrap-rating/bootstrap-rating.min.js"></script>*@
+    <script src="~/Scripts/bootstrap-rating/bootstrap-rating.min.js"></script>*@
 <!-- //for bootstrap working -->
 <link href="//fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800" rel="stylesheet">
 <link href='//fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,900,900italic,700italic' rel='stylesheet' type='text/css'>
@@ -43,12 +45,12 @@
                 <div class="flexslider">
 
                     <ul class="slides">
-                       @foreach (var i in Model.PathToPhotos)
-                       {
-                        <li data-thumb="@i">
-                            <div class="thumb-image"> <img src="@i" data-imagezoom="true" class="img-responsive"> </div>
-                       </li>
-                       }
+                        @foreach (var i in Model.PathToPhotos)
+                        {
+                            <li data-thumb="@i">
+                                <div class="thumb-image"> <img src="@i" data-imagezoom="true" class="img-responsive"> </div>
+                            </li>
+                        }
                     </ul>
                     <div class="clearfix"></div>
                 </div>
@@ -60,7 +62,7 @@
             <div class="description">
                 <h5>Опис автомобіля</h5>
                 <p>@Model.Description</p>
-                 
+
             </div>
         </div>
         <div class="clearfix"> </div>
@@ -98,23 +100,23 @@
 
                             @foreach (var comm in Model.Comments)
                             {
-                        <div class="bootstrap-tab-text-grids">
-                            <div class="bootstrap-tab-text-grid">
-                                <div class="bootstrap-tab-text-grid-left">
-                                    <img src="/images/avatar.png" alt=" " class="img-responsive">
+                                <div class="bootstrap-tab-text-grids">
+                                    <div class="bootstrap-tab-text-grid">
+                                        <div class="bootstrap-tab-text-grid-left">
+                                            <img src="/images/avatar.png" alt=" " class="img-responsive">
+                                        </div>
+                                        <div class="bootstrap-tab-text-grid-right">
+                                            <ul>
+                                                <li><a href="#">@comm.AuthorName</a></li>
+                                                @*<li>Рейтинг : @Html.BootstrapRating(m => (double)(comm.Rating))</li>*@
+                                            </ul>
+                                            <p>
+                                                @comm.Body
+                                            </p>
+                                        </div>
+                                        <div class="clearfix"> </div>
+                                    </div>
                                 </div>
-                                <div class="bootstrap-tab-text-grid-right">
-                                    <ul>
-                                        <li><a href="#">@comm.AuthorName</a></li>
-                                        @*<li>Рейтинг : @Html.BootstrapRating(m => (double)(comm.Rating))</li>*@
-                                    </ul>
-                                    <p>
-                                        @comm.Body
-                                    </p>
-                                </div>
-                                <div class="clearfix"> </div>
-                            </div>
-                        </div>
                             }
                         </div>
                     </div>
@@ -124,7 +126,7 @@
                             <h6>Додаткова інформація</h6>
                             @foreach (var i in Model.AdditionalOptions)
                             {
-                        <p>@i</p>
+                                <p>@i</p>
                             }
 
                         </div>
@@ -133,8 +135,15 @@
             </div>
             <div class="add-review">
                 <h4>Добавити відгук</h4>
-                @using (Html.BeginForm("Comment", "Autos", FormMethod.Post))
-                {
+                @using (Ajax.BeginForm("Comment", "Autos", null, new AjaxOptions
+    {
+        HttpMethod = "POST",
+        OnSuccess = "OnSuccess",
+    }, new
+    {
+        enctype = "multipart/form-data"
+    }))
+    {
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
@@ -142,8 +151,9 @@
             <input type="email" name="Email" id="Email" size="100" placeholder="Пошта" style="max-width:100%"><br>
             <textarea name="Body" id="Body" placeholder="Повідомлення" cols="200" style="max-width:100%"></textarea><br>
             <input type="hidden" name="IdAuto" id="IdAuto" value="@Model.Id">
-            <input type="submit" value="Надіслати">
-                }
+            @Html.MathCaptcha();
+            <input type="submit" value="Надіслати"> <div id="mstatus"></div>
+}
             </div>
         </div>
 
@@ -187,35 +197,35 @@
 
         <div class="w3_agile_latest_arrivals">
             <h3 class="wthree_text_info">Останні <span>Продані автомобілі</span></h3>
-            
-                @foreach (var item in Model.LastSoldCars)
-                {
-                    <div class="col-md-3 product-men single">
-                        <div class="men-pro-item simpleCart_shelfItem">
-                            <div class="men-thumb-item">
-                                <img src="@item.PathToPhotos[0]" alt="" class="pro-image-front">
-                                <img src="@item.PathToPhotos[1]" alt="" class="pro-image-back">
-                        <div class="men-cart-pro">
-                                    <div class="inner-men-cart-pro">
-                                        @Html.ActionLink("Переглянути","Details",new { id = item.Id }, new { @class = "link-product-add-cart" })                               
-                                    </div>
-                                </div>
-                                <span class="product-new-top">Sold</span>
 
-                            </div>
-                            <div class="item-info-product ">
-                                <h4>@Html.ActionLink(item.Name, "Details", new { id = item.Id })</h4>
-                                <div class="info-product-price">
-                                    <span class="item_price">$@(item.Price * 1.2m)</span>
-                                    <del>$@item.Price</del>
+            @foreach (var item in Model.LastSoldCars)
+            {
+                <div class="col-md-3 product-men single">
+                    <div class="men-pro-item simpleCart_shelfItem">
+                        <div class="men-thumb-item">
+                            <img src="@item.PathToPhotos[0]" alt="" class="pro-image-front">
+                            <img src="@item.PathToPhotos[1]" alt="" class="pro-image-back">
+                            <div class="men-cart-pro">
+                                <div class="inner-men-cart-pro">
+                                    @Html.ActionLink("Переглянути", "Details", new { id = item.Id }, new { @class = "link-product-add-cart" })
                                 </div>
+                            </div>
+                            <span class="product-new-top">Sold</span>
+
+                        </div>
+                        <div class="item-info-product ">
+                            <h4>@Html.ActionLink(item.Name, "Details", new { id = item.Id })</h4>
+                            <div class="info-product-price">
+                                <span class="item_price">$@(item.Price * 1.2m)</span>
+                                <del>$@item.Price</del>
                             </div>
                         </div>
                     </div>
-                }
+                </div>
+            }
 
             <div class="clearfix"> </div>
- 
+
         </div>
 
 
@@ -229,7 +239,7 @@
 
     </div>
 </div>
- 
+
 
 @Scripts.Render("~/bundles/bootstrap")
 @Scripts.Render("~/bundles/index")
@@ -310,9 +320,20 @@
             };
         */
 
-         
+
 
     });
 </script>
 <!-- //here ends scrolling icon -->
 <!-- for bootstrap working -->
+<script type="text/javascript">
+
+    function OnSuccess(data) {
+        if (data.success == true)
+            document.getElementById("mstatus").innerHTML = "Повідомлення відправлено!";
+        else {
+            document.getElementById("mstatus").innerHTML = "Помилка відправлення!";
+        }
+        location.reload();
+    }
+</script>
