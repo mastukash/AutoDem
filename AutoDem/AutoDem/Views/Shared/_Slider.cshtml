@@ -21,9 +21,9 @@
             <li>
                 <a href="#" class="expand"><i class="fa fa-tasks"></i> Повідомлення<span class="label label-danger">@(Model.ReadMessages + Model.UnreadMessages)</span></a>
                 <ul>
-                    <li><a href="visuals.html">Прочитані<span class="label label-danger">@Model.ReadMessages</span></a></li>
-                    <li><a href="navs.html">Не прочитані<span class="label label-danger">@Model.UnreadMessages</span></a></li>
-                    <li><a href="panel_options.html">Усі<span class="label label-danger">@(Model.ReadMessages + Model.UnreadMessages) </span></a></li>
+                    <li><a href="@Url.Action("Messages","Admin",new { read = true})">Прочитані<span class="label label-danger">@Model.ReadMessages</span></a></li>
+                    <li><a href="@Url.Action("Messages","Admin",new { read = false})">Не прочитані<span class="label label-danger">@Model.UnreadMessages</span></a></li>
+                    @*<li><a href="panel_options.html">Усі<span class="label label-danger">@(Model.ReadMessages + Model.UnreadMessages) </span></a></li>*@
                 </ul>
             </li>
 

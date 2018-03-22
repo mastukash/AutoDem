@@ -1,0 +1,52 @@
+﻿@model List<AutoDem.Controllers.AdminMessageViewModel>
+
+@{
+    ViewBag.Title = "Messages";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+
+<div class="page-content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Default datatable inside panel -->
+            <div class="panel panel-default">@*Model[0].Read ?: "Повідомлення";*@
+                <div class="panel-heading"><h6 class="panel-title">@(Model.Count>0 ? "Прочитані повідомення" : "Не прочитані повідомлення")</h6></div>
+                <div class="datatable">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Автор</th>
+                                <th>Тема</th>
+                                <th>Пошта</th>
+                                <th>Телефон</th>
+                                @*<th>Body</th>*@
+                                <th>Дата</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderBy(x => x.DateTime))
+                            {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@($"{item.AuthorLName} {item.AuthorFName}")</td>
+                                        <td>@item.Subject</td>
+                                        <td>@item.Email</td>
+                                        <td>@item.Phone</td>
+                                        @*<td>@item.Body</td>*@
+                                        <td>@item.DateTime</td>
+                                    </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- /default datatable inside panel -->
+
+        </div>
+
+    </div>
+
+
+</div>
