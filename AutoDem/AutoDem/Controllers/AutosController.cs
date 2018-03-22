@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using AutoDem.DAL;
 using AutoDem.Models;
+using CaptchaMvc.HtmlHelpers;
 
 namespace AutoDem.Controllers
 {
@@ -116,17 +117,20 @@ namespace AutoDem.Controllers
         [HttpPost]
         public async Task<ActionResult> Comment(CommentViewModel model)
         {
-            
+            if (!this.IsCaptchaValid("Captcha is not valid"))
+            {
+                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+            }
             if (!ModelState.IsValid) //data validation failed
             {
-                return View();
+                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
             }
 
             DAL.Comment comm = new Comment()
             {
-                AuthorName = model.AuthorFName,
-                Email = model.Email,
-                Body = model.Body,
+                AuthorName = Server.HtmlEncode(model.AuthorFName),
+                Email = Server.HtmlEncode(model.Email),
+                Body = Server.HtmlEncode(model.Body),
                 Auto = await db.Repository<Auto>().FindByIdAsync(model.IdAuto)
             };
 
@@ -134,7 +138,8 @@ namespace AutoDem.Controllers
             await db.SaveAsync();
 
 
-            return View();
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+
 
         }
         protected override void Dispose(bool disposing)

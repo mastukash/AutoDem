@@ -7,7 +7,8 @@
         display: inline-block;
     }
 </style>
-<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+@Scripts.Render("~/bundles/jquery")
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
 <div class="gtco-loader"></div>
 
@@ -46,10 +47,11 @@
                                 id = "myForm"
                             }))
                             {
-                                @Html.Partial("_ContactForm");
+                                @Html.Partial("_ContactForm")
 
                             }
                         </div>
+
                         <div class="col-md-5 col-md-push-1 animate-box">
 
                             <div class="gtco-contact-info">
@@ -72,7 +74,7 @@
 <div class="gototop js-top">
     <a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
 </div>
-@Scripts.Render("~/bundles/jquery")
+
 @Scripts.Render("~/bundles/bootstrap")
 @Scripts.Render("~/bundles/index")
 

@@ -1,5 +1,6 @@
 ﻿using AutoDem.DAL;
 using AutoDem.Models;
+using CaptchaMvc.HtmlHelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace AutoDem.Controllers
         [HttpPost]
         public async Task<ActionResult> Contact(ContactViewModel model)
         {
-            if (!ModelState.IsValid) //data validation failed
+            if (!ModelState.IsValid || !this.IsCaptchaValid("Captcha is not valid")) //data validation failed
             {
                 if (Request.IsAjaxRequest()) //was this request an AJAX request?
                 {
@@ -68,12 +69,12 @@ namespace AutoDem.Controllers
 
             DAL.MailMessage m = new DAL.MailMessage()
             {
-                Subject = model.Subject,
-                Body = model.Body,
-                AuthorFName = model.AuthorFName,
-                AuthorLName = model.AuthorLName,
-                Email = model.Email,
-                Phone = model.Phone,
+                Subject = Server.HtmlEncode(model.Subject),
+                Body = Server.HtmlEncode(model.Body),
+                AuthorFName = Server.HtmlEncode(model.AuthorFName),
+                AuthorLName = Server.HtmlEncode(model.AuthorLName),
+                Email = Server.HtmlEncode(model.Email),
+                Phone = Server.HtmlEncode(model.Phone),
                 Read = false,
                 DateTime = DateTime.Now
             };
