@@ -25,6 +25,19 @@ namespace AutoDem.Controllers
         public List<Comment> Comments { get; set; }
     }
 
+    public class AdminMessageViewModel
+    {
+        public int Id { get; set; }
+        public string Subject { get; set; }
+        public string Body { get; set; }
+        public string AuthorFName { get; set; }
+        public string AuthorLName { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public DateTime DateTime { get; set; }
+        public bool Read { get; set; }
+    }
+
     public class AdminController : Controller
     {
         GenericUnitOfWork unitOfWork = new GenericUnitOfWork();
@@ -59,8 +72,34 @@ namespace AutoDem.Controllers
         }
 
 
-        [HttpPost]/*, ActionName("Delete")*/
-        public async Task<ActionResult> Delete(string id)
+        public async Task<ActionResult> Messages(bool read)
+        {
+            List<AdminMessageViewModel> model = new List<AdminMessageViewModel>();
+
+            var mails = await unitOfWork.Repository<MailMessage>().FindAllAsync(x=> x.Read == read);
+
+            foreach (var item in mails)
+            {
+                model.Add( new AdminMessageViewModel()
+                {
+                    Id = item.Id,
+                    AuthorFName = item.AuthorFName,
+                    AuthorLName = item.AuthorLName,
+                    Body = item.Body,
+                    Email = item.Email,
+                    Phone = item.Phone,
+                    DateTime = item.DateTime,
+                    Read = item.Read,
+                    Subject = item.Subject,
+                });
+            }
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult> Delete(int id)
         {
             var comment = await unitOfWork.Repository<Comment>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
             await unitOfWork.Repository<Comment>().RemoveAsync(comment);
