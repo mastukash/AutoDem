@@ -1,0 +1,69 @@
+﻿@model List<AutoDem.Controllers.AdminCommentViewModel>
+
+@{
+    ViewBag.Title = "Comments";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<script>
+    function confirmedDeletion(id){   
+        $.post('@Url.Action("Delete", "Admin")', { id : id } , function (data) {
+            if(data.Success) {
+                $('button'+id).first().closest('tr').remove();
+            }
+        });
+    }
+
+     
+</script>
+
+
+<div class="page-content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Default datatable inside panel -->
+            <div class="panel panel-default">
+                <div class="panel-heading"><h6 class="panel-title">Default datatable inside panel</h6></div>
+                <div class="datatable">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Auto</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Body</th>
+                                <th>Rating</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var i in Model)
+                            {
+                                foreach (var item in i.Comments)
+                                {
+                                    <tr>
+                                        <td>@i.IdAuto</td>
+                                        <td><img src="@i.PathToPhoto" width="50" height="50" /> @i.Name</td>
+                                        <td>@item.AuthorName</td>
+                                        <td>@item.Email</td>
+                                        <td>@item.Phone</td>
+                                        <td>@item.Body</td>
+                                        <td>@item.Rating</td>
+                                        <td><input  data-toggle="modal" data-target="#myModal" class="btn btn-danger" id="@("button"+item.Id)" type="button" onclick="confirmedDeletion(@item.Id)" value="Delete" /></td>
+                                        </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- /default datatable inside panel -->
+
+        </div>
+
+    </div>
+
+
+</div>

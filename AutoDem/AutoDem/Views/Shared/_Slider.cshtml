@@ -1,0 +1,33 @@
+﻿@model AutoDem.Controllers.AdminSliderViewModel
+     <!-- Sidebar -->
+@*sidebar collapse*@
+
+
+    <div class="sidebar">
+        <ul class="navigation">
+            <li><a href="@Url.Action("Comments","Admin")"><i class="fa fa-bar-chart-o"></i>Коментарі<span class="label label-danger">@Model.CommentCount</span></a></li>
+            <li>
+                <a href="#" class="expand"><i class="fa fa-align-justify"></i>Авто</a>
+                <ul>
+                    <li><a href="form_components.html">Список Автомобілів<span class="label label-danger">@Model.AutosCount</span></a></li>
+                    <li><a href="form_validation.html">Марки Автомобілів</a></li>
+                    <li><a href="wysiwyg.html">Моделі Автомобілів</a></li>
+                    <li><a href="form_layouts.html">Типи Автомобілів</a></li>
+                    <li><a href="form_grid.html">Типи палива</a></li>
+                    <li><a href="file_uploader.html">Країни</a></li>
+                    <li><a href="file_uploader.html">Додаткові обіції</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" class="expand"><i class="fa fa-tasks"></i> Повідомлення<span class="label label-danger">@(Model.ReadMessages + Model.UnreadMessages)</span></a>
+                <ul>
+                    <li><a href="visuals.html">Прочитані<span class="label label-danger">@Model.ReadMessages</span></a></li>
+                    <li><a href="navs.html">Не прочитані<span class="label label-danger">@Model.UnreadMessages</span></a></li>
+                    <li><a href="panel_options.html">Усі<span class="label label-danger">@(Model.ReadMessages + Model.UnreadMessages) </span></a></li>
+                </ul>
+            </li>
+
+        </ul>
+    </div>
+
+    <!-- /sidebar -->
