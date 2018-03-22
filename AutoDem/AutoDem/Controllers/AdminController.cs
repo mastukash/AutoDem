@@ -16,6 +16,13 @@ namespace AutoDem.Controllers
         public int UnreadMessages { get; set; }
         public int AutosCount { get; set; }
     }
+    public class AdminAutosListViewModel
+    {
+        public int IdAuto { get; set; }
+        public string Name { get; set; }
+        public string PathToPhoto { get; set; }
+    }
+
 
     public class AdminCommentViewModel
     {
@@ -45,6 +52,26 @@ namespace AutoDem.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+        public async Task<ActionResult> AutosList()
+        {
+            List<AdminAutosListViewModel> model = new List<AdminAutosListViewModel>();
+
+            var autos = await unitOfWork.Repository<Auto>().GetAllAsync(); ;
+
+            foreach (var auto in autos)
+            {
+                var tmp = new AdminAutosListViewModel()
+                {
+                    IdAuto = auto.Id,
+                    Name = $"{auto.Model.Brand.Name} {auto.Model.Name} {auto.YearOfManufacture}",
+                    PathToPhoto = auto.PhotoAutos[0].PathToPhoto
+                };
+                model.Add(tmp);
+            }
+
+            return View(model);
         }
 
         public async Task<ActionResult> Comments()

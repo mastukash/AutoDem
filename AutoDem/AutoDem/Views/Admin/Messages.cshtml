@@ -16,18 +16,12 @@
                 <div class="panel-heading"><h6 class="panel-title">@(Request.Params["read"] == "True" ? "Прочитані повідомення" : "Не прочитані повідомлення")</h6></div>
                 <div class="datatable">
                     <table class="table" @if (Request.Params["read"] == "False") { <text> style="font-weight:700;" </text> }>
-
                         <thead>
-
                             <tr>
-
                                 <th>#</th>
                                 <th>Автор</th>
-
                                 <th>Тема</th>
-
                                 <th>Пошта</th>
-
                                 <th>Телефон</th>
                                 @*<th>Body</th>*@
                                 <th>Дата</th>

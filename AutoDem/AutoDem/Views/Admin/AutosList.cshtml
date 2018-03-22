@@ -1,0 +1,51 @@
+﻿@model List<AutoDem.Controllers.AdminAutosListViewModel>
+
+@{
+    ViewBag.Title = "Autos List";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="page-content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Default datatable inside panel -->
+            <input class="btn btn-success" id="AddAuto" type="button" value="Додати автомобіль" style="margin:10px 0px;" />
+            <div class="panel panel-default">
+                <div class="panel-heading"><h6 class="panel-title">Список автомобілів</h6></div>
+                <div class="datatable">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="width:5%">#</th>
+                                <th style="width:15%">Фото</th>
+                                <th style="width:50%">Назва автомобіля</th>
+                                <th style="width:10%"></th>
+                                <th style="width:10%"></th>
+                                <th style="width:10%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var i in Model)
+                    {
+
+                        <tr>
+                            <td>@i.IdAuto</td>
+                            <td><a href="@Url.Action("Details","Autos",new { id = i.IdAuto})"><img src="@i.PathToPhoto" width="50" height="50" /></a></td>
+                            <td>@i.Name</td>
+                            <td><input class="btn btn-success" id="@("s"+i.IdAuto)" type="button" value="Переглянути" /></td>
+                            <td><input class="btn btn-info" id="@("e"+i.IdAuto)" type="button" value="Редагувати" /></td>
+                            <td><input class="btn btn-danger" id="@("d"+i.IdAuto)" type="button" value="Видалити" /></td>
+                        </tr>
+            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- /default datatable inside panel -->
+
+        </div>
+
+    </div>
+
+
+</div>
