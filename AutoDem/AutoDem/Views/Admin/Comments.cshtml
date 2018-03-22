@@ -6,12 +6,9 @@
 }
 
 <script>
+
     function confirmedDeletion(id){   
-        $.post('@Url.Action("Delete", "Admin")', { id : id } , function (data) {
-            if(data.Success) {
-                $('button'+id).first().closest('tr').remove();
-            }
-        });
+       
     }
 
      
@@ -45,13 +42,13 @@
                                 {
                                     <tr>
                                         <td>@i.IdAuto</td>
-                                        <td><img src="@i.PathToPhoto" width="50" height="50" /> @i.Name</td>
+                                        <td><a href="@Url.Action("Details","Autos",new { id = i.IdAuto})"><img src="@i.PathToPhoto" width="50" height="50" /> @i.Name</a></td>
                                         <td>@item.AuthorName</td>
                                         <td>@item.Email</td>
                                         <td>@item.Phone</td>
                                         <td>@item.Body</td>
                                         <td>@item.Rating</td>
-                                        <td><input  data-toggle="modal" data-target="#myModal" class="btn btn-danger" id="@("button"+item.Id)" type="button" onclick="confirmedDeletion(@item.Id)" value="Delete" /></td>
+                                        <td><input  data-toggle="confirmation" class="btn btn-danger" data-placement="left" id="@("b"+item.Id)" type="button" onclick="confirmedDeletion(@item.Id)" value="Delete" /></td>
                                         </tr>
                                 }
                             }
@@ -67,3 +64,18 @@
 
 
 </div>
+<script>
+
+    $('[data-toggle=confirmation]').confirmation({
+        rootSelector: '[data-toggle=confirmation]',
+        onConfirm: function () {
+            $.post('@Url.Action("Delete", "Admin")', { id: $(this).attr("id") } , function (data) {
+                if (data.Success) {
+                    location.reload();
+                    //$(data.jsid).closest('tr').first().remove();
+            }
+        });
+        },
+        // other options
+    });
+    </script>

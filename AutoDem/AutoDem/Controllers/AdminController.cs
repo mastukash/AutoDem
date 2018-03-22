@@ -60,13 +60,13 @@ namespace AutoDem.Controllers
 
 
         [HttpPost]/*, ActionName("Delete")*/
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(string id)
         {
-            var comment = await unitOfWork.Repository<Comment>().FindByIdAsync(id);
+            var comment = await unitOfWork.Repository<Comment>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
             await unitOfWork.Repository<Comment>().RemoveAsync(comment);
             await unitOfWork.SaveAsync();
 
-            return Json(new { Success = true });
+            return Json(new { Success = true, jsid =  id});
         }
 
 
