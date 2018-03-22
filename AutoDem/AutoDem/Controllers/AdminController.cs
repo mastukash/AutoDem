@@ -29,7 +29,7 @@ namespace AutoDem.Controllers
     {
         public int Id { get; set; }
         public string Subject { get; set; }
-        public string Body { get; set; }
+       // public string Body { get; set; }
         public string AuthorFName { get; set; }
         public string AuthorLName { get; set; }
         public string Email { get; set; }
@@ -85,7 +85,7 @@ namespace AutoDem.Controllers
                     Id = item.Id,
                     AuthorFName = item.AuthorFName,
                     AuthorLName = item.AuthorLName,
-                    Body = item.Body,
+                   // Body = item.Body,
                     Email = item.Email,
                     Phone = item.Phone,
                     DateTime = item.DateTime,
@@ -99,7 +99,7 @@ namespace AutoDem.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(string id)
         {
             var comment = await unitOfWork.Repository<Comment>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
             await unitOfWork.Repository<Comment>().RemoveAsync(comment);
@@ -108,6 +108,14 @@ namespace AutoDem.Controllers
             return Json(new { Success = true, jsid =  id});
         }
 
+        public async Task<ActionResult> ReadMsg(string id)
+        {
+            var msg = await unitOfWork.Repository<MailMessage>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
+            msg.Read = true;
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true, jsbody = msg.Body });
+        }
 
         public ActionResult Slider()
         {
