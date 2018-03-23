@@ -22,6 +22,12 @@ namespace AutoDem.Controllers
         public string Name { get; set; }
         public string PathToPhoto { get; set; }
     }
+    public class AdminBrandListViewModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
 
 
     public class AdminCommentViewModel
@@ -52,6 +58,25 @@ namespace AutoDem.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+        public async Task<ActionResult> BrandList()
+        {
+            List<AdminBrandListViewModel> model = new List<AdminBrandListViewModel>();
+
+            var brands = await unitOfWork.Repository<Brand>().GetAllAsync(); ;
+
+            foreach (var brand in brands)
+            {
+                var tmp = new AdminBrandListViewModel()
+                {
+                    Id = brand.Id,
+                    Name = brand.Name
+                };
+                model.Add(tmp);
+            }
+
+            return View(model);
         }
 
         public async Task<ActionResult> AutosList()
@@ -133,6 +158,48 @@ namespace AutoDem.Controllers
             await unitOfWork.SaveAsync();
 
             return Json(new { Success = true, jsid =  id});
+        }
+
+        //AddBrand
+        [HttpPost]
+        public async Task<ActionResult> AddBrand(string name)
+        {
+            if (name == "" || name== "Поле не може бути пустим")
+                return Json(new { Success = false, error = "Поле не може бути пустим" });
+            var brand = (await unitOfWork.Repository<Brand>().GetAllAsync()).Where(x => x.Name == name).FirstOrDefault();
+            if (brand != null)
+                return Json(new { Success = false, error = "Така марка уже зареєстрована у базі!" });
+            brand = new Brand()
+            {
+                Name = name
+            };
+            await unitOfWork.Repository<Brand>().AddAsync(brand);
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true});
+        }
+        [HttpPost]
+        public async Task<ActionResult> DeleteBrand(string id)
+        {
+            var brand = await unitOfWork.Repository<Brand>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
+            await unitOfWork.Repository<Brand>().RemoveAsync(brand);
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true, jsid = id });
+        }
+        [HttpPost]
+        public async Task<ActionResult> ChangeBrandName(string id, string name)
+        {
+            if (name == "" || name == "Поле не може бути пустим")
+                return Json(new { Success = false, error = "Поле не може бути пустим" });
+            var brand = (await unitOfWork.Repository<Brand>().GetAllAsync()).Where(x => x.Name == name).FirstOrDefault();
+            if (brand != null)
+                return Json(new { Success = false, error = "Така марка уже зареєстрована у базі!" });
+            brand = await unitOfWork.Repository<Brand>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
+            brand.Name = name;
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true, jsid = id });
         }
 
         public async Task<ActionResult> ReadMsg(string id)
