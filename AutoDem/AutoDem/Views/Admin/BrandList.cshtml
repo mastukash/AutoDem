@@ -6,7 +6,7 @@
 }
 <script>
     function changeName(idBrand) {
-        var nameBrand = $("#s" + idBrand).val();
+        var nameBrand = $("#n" + idBrand).val();
         $.post('@Url.Action("ChangeBrandName", "Admin")', { id: idBrand, name: nameBrand }, function (data) {
             if (data.Success) {
                 //location.reload();
@@ -61,7 +61,7 @@
 
                 <tr>
                     <td>@i.Id</td>
-                    <td>@Html.EditorFor(m => i.Name,new { id = "n" + @i.Id})</td>
+                    <td>@Html.EditorFor(m => i.Name, null, "n" + i.Id)</td>
                     <td><input class="btn btn-info" id="@("s"+i.Id)" type="button" value="Зберегти" onclick="changeName(@i.Id)"/></td>
                     <td><input data-toggle="confirmation" class="btn btn-danger" data-placement="left" id="@("d"+i.Id)" type="button"  value="Delete" /></td>
                 </tr>

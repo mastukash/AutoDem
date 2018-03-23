@@ -195,7 +195,7 @@ namespace AutoDem.Controllers
             var brand = (await unitOfWork.Repository<Brand>().GetAllAsync()).Where(x => x.Name == name).FirstOrDefault();
             if (brand != null)
                 return Json(new { Success = false, error = "Така марка уже зареєстрована у базі!" });
-            brand = await unitOfWork.Repository<Brand>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
+            brand = await unitOfWork.Repository<Brand>().FindByIdAsync(Convert.ToInt32(id));
             brand.Name = name;
             await unitOfWork.SaveAsync();
 
