@@ -182,6 +182,8 @@ namespace AutoDem.Controllers
         public async Task<ActionResult> DeleteBrand(string id)
         {
             var brand = await unitOfWork.Repository<Brand>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
+            if(brand.Models.Count>0)
+                return Json(new { Success = false, jsid = id.Remove(0, 1), errmsg = "Видаліть спочатку моделі цієї марки", models = brand.Models.Select(x=> x.Name) });
             await unitOfWork.Repository<Brand>().RemoveAsync(brand);
             await unitOfWork.SaveAsync();
 

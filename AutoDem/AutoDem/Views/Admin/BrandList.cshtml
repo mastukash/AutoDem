@@ -7,9 +7,11 @@
 <script>
     function changeName(idBrand) {
         var nameBrand = $("#n" + idBrand).val();
+        var delerr = '#delerr' + idBrand;
+        $(".errmsgs").html("");
         $.post('@Url.Action("ChangeBrandName", "Admin")', { id: idBrand, name: nameBrand }, function (data) {
             if (data.Success) {
-                //location.reload();
+
             }
         });
     }
@@ -61,9 +63,9 @@
 
                 <tr>
                     <td>@i.Id</td>
-                    <td>@Html.EditorFor(m => i.Name, null, "n" + i.Id)</td>
+                    <td>@Html.EditorFor(m => i.Name, null, "n" + i.Id) <span id="@("delerr" + i.Id)" class="errmsgs" style="color:red;"></span></td>
                     <td><input class="btn btn-info" id="@("s"+i.Id)" type="button" value="Зберегти" onclick="changeName(@i.Id)"/></td>
-                    <td><input data-toggle="confirmation" class="btn btn-danger" data-placement="left" id="@("d"+i.Id)" type="button"  value="Delete" /></td>
+                    <td><input data-toggle="confirmation" class="btn btn-danger" data-placement="left" id="@("d"+i.Id)" type="button"  value="Видалити" /></td>
                 </tr>
 }
                         </tbody>
@@ -94,10 +96,21 @@
      $('[data-toggle=confirmation]').confirmation({
         rootSelector: '[data-toggle=confirmation]',
         onConfirm: function () {
-            $.post('@Url.Action("DeleteBrand", "Admin")', { id: $(this).attr("id") } , function (data) {
+            $.post('@Url.Action("DeleteBrand", "Admin")', { id: $(this).attr("id") }, function (data) {
+                $(".errmsgs").html("");
                 if (data.Success) {
                     location.reload();
-            }
+                }
+                else
+                    if (data.errmsg) {
+                        var body = "Помилка видалення." + data.errmsg + ": "
+                        $.each(data.models, function (index, value) {
+                            body += "<span style='color:green;' >" +value +"</span>" + " | ";
+                        });
+                        var delerr = '#delerr' + data.jsid;
+                        $(delerr).html(body);
+                    }
+
         });
         },
         // other options
