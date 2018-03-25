@@ -1,20 +1,20 @@
-﻿@model List<AutoDem.Controllers.AdminBrandListViewModel>
+﻿@model List<AutoDem.Controllers.AdminModelListViewModel>
 
 @{
     ViewBag.Title = "Autos List";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 <script>
-    function changeName(idBrand) {
-        var nameBrand = $("#n" + idBrand).val();
-        var changeName = '#delerr' + idBrand;
+    function changeName(id_Model) {
+        var name_Model = $("#n" + id_Model).val();
+        var changeName = '#delerr' + id_Model;
         $(".errmsgs").html("");
-        $.post('@Url.Action("ChangeBrandName", "Admin")', { id: idBrand, name: nameBrand }, function (data) {
+        $.post('@Url.Action("Change_ModelName", "Admin")', { id: id_Model, name: name_Model }, function (data) {
             if (data.Success) {
-                $(changeName).html("Назву марки змінено");
+                $(changeName).html("Назву моделі змінено");
             }
             else 
-                $(changeName).html("Марка із такою назвою уже є в базі");
+                $(changeName).html("Модель із такою назвою уже є в базі");
         });
     }
     </script>
@@ -25,27 +25,27 @@
             <!-- Default datatable inside panel -->
             
             <div class="panel panel-default">
-                <div class="panel-heading"><h6 class="panel-title">Марки автомобілів</h6></div>
+                <div class="panel-heading"><h6 class="panel-title">Моделі автомобілів</h6></div>
                 <div class="datatable">
-                    <input class="btn btn-primary" data-toggle="modal" data-target="#AddBrandModal" data-whatever="@@mdo" id="AddBrand" type="button" value="Добавити марку" style="margin:10px 10px;" />
+                    <input class="btn btn-primary" data-toggle="modal" data-target="#Add_ModelModal" data-whatever="@@mdo" id="Add_Model" type="button" value="Добавити модель" style="margin:10px 10px;" />
                     <!-- Modal -->
-                    <div class="modal fade" id="AddBrandModal" tabindex="-1" role="dialog" aria-labelledby="AddBrandLabel" aria-hidden="true">
+                    <div class="modal fade" id="Add_ModelModal" tabindex="-1" role="dialog" aria-labelledby="Add_ModelLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="AddBrandLabel">Нова марка автомобіля</h5>
+                                    <h5 class="modal-title" id="Add_ModelLabel">Нова модель автомобіля</h5>
                                 </div>
                                 <div class="modal-body">
                                     <form>
                                         <div class="form-group">
-                                            <label for="message-text" class="col-form-label" >Введіть назву марки:</label>
+                                            <label for="message-text" class="col-form-label" >Введіть назву моделі:</label>
                                             <textarea class="form-control" id="message-text"></textarea>
                                         </div>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Відмінити</button>
-                                    <button type="button" class="btn btn-primary" id="createBrand">Зберегти</button>
+                                    <button type="button" class="btn btn-primary" id="create_Model">Зберегти</button>
                                 </div>
                             </div>
                         </div>
@@ -54,7 +54,8 @@
                         <thead>
                             <tr>
                                 <th style="width:5%">#</th>
-                                <th style="width:75%">Марка</th>
+                                <th style="width:20%">Модель</th>
+                                <th style="width:55%">Марка</th>
                                 <th style="width:10%"></th>
                                 <th style="width:10%"></th>
                             </tr>
@@ -63,12 +64,13 @@
                             @foreach (var i in Model)
             {
 
-                <tr>
-                    <td>@i.Id</td>
-                    <td>@Html.EditorFor(m => i.Name, null, "n" + i.Id) <span id="@("delerr" + i.Id)" class="errmsgs" style="color:red;"></span></td>
-                    <td><input class="btn btn-info" id="@("s"+i.Id)" type="button" value="Зберегти" onclick="changeName(@i.Id)"/></td>
-                    <td><input data-toggle="confirmation" class="btn btn-danger" data-placement="left" id="@("d"+i.Id)" type="button"  value="Видалити" /></td>
-                </tr>
+                            <tr>
+                                <td>@i.Id</td>
+                                <td>@Html.EditorFor(m => i.Name, null, "n" + i.Id)</td>
+                                <td>@Html.LabelFor(m =>  m, i.BrandName, "b" + i.Id) <span id="@("delerr" + i.Id)" class="errmsgs" style="color:red;"></span></td>
+                                <td><input class="btn btn-info" id="@("s"+i.Id)" type="button" value="Зберегти" onclick="changeName(@i.Id)" /></td>
+                                <td><input data-toggle="confirmation" class="btn btn-danger" data-placement="left" id="@("d"+i.Id)" type="button" value="Видалити" /></td>
+                            </tr>
 }
                         </tbody>
                     </table>
@@ -81,8 +83,8 @@
     </div>
 </div>
 <script>
-    $("#createBrand").click(function (e) {
-        $.post('@Url.Action("AddBrand", "Admin")', {
+    $("#create_Model").click(function (e) {
+        $.post('@Url.Action("Add_Model", "Admin")', {
             name: $("#message-text").first().val()
         },
             function (data) {
@@ -98,7 +100,7 @@
      $('[data-toggle=confirmation]').confirmation({
          rootSelector: '[data-toggle=confirmation]',
         onConfirm: function () {
-            $.post('@Url.Action("DeleteBrand", "Admin")', { id: $(this).attr("id") }, function (data) {
+            $.post('@Url.Action("Delete_Model", "Admin")', { id: $(this).attr("id") }, function (data) {
                 $(".errmsgs").html("");
                 if (data.Success) {
                     location.reload();

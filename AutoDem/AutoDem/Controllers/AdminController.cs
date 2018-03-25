@@ -28,7 +28,12 @@ namespace AutoDem.Controllers
         public string Name { get; set; }
     }
 
-
+    public class AdminModelListViewModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string BrandName { get; set; }
+    }
 
     public class AdminCommentViewModel
     {
@@ -72,6 +77,25 @@ namespace AutoDem.Controllers
                 {
                     Id = brand.Id,
                     Name = brand.Name
+                };
+                model.Add(tmp);
+            }
+
+            return View(model);
+        }
+        public async Task<ActionResult> ModelList()
+        {
+            List<AdminModelListViewModel> model = new List<AdminModelListViewModel>();
+
+            var models = await unitOfWork.Repository<Model>().GetAllAsync(); ;
+
+            foreach (var m in models)
+            {
+                var tmp = new AdminModelListViewModel()
+                {
+                    Id = m.Id,
+                    Name = m.Name,
+                    BrandName = m.Brand.Name
                 };
                 model.Add(tmp);
             }
