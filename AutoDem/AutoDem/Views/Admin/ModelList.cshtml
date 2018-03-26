@@ -6,14 +6,19 @@
 }
 <script>
     function changeName(idModel) {
-        var nameBrand = $("#n" + idModel).val();
-        $.post('@Url.Action("ChangeBrandName", "Admin")', { id: idModel, name: nameBrand }, function (data) {
+        var nameModel = $("#n" + idModel).val();
+        var changeName = '#delerr' + idModel;
+        //var idBrand = $("#addbrand").options[$("#addbrand").selectedIndex].value;
+        $(".errmsgs").html("");
+        $.post('@Url.Action("ChangeModel", "Admin")', { id: idModel, name: nameModel }, function (data) {
             if (data.Success) {
-                //location.reload();
+                $(changeName).html("Назву автомобіля змінено");
             }
+            else
+                $(changeName).html("Модель із такою назвою уже є в базі");
         });
     }
-    </script>
+</script>
 
 <div class="page-content">
     <div class="row">
@@ -21,7 +26,7 @@
             <!-- Default datatable inside panel -->
             
             <div class="panel panel-default">
-                <div class="panel-heading"><h6 class="panel-title">Марки автомобілів</h6></div>
+                <div class="panel-heading"><h6 class="panel-title">моделі автомобілів</h6></div>
                 <div class="datatable">
                     <input class="btn btn-primary" data-toggle="modal" data-target="#AddBrandModal" data-whatever="@@mdo" id="AddBrand" type="button" value="Добавити марку" style="margin:10px 10px;" />
                     <!-- Modal -->
@@ -29,19 +34,22 @@
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="AddBrandLabel">Нова марка автомобіля</h5>
+                                    <h5 class="modal-title" id="AddBrandLabel">Нова Модель автомобіля</h5>
                                 </div>
                                 <div class="modal-body">
                                     <form>
                                         <div class="form-group">
-                                            <label for="message-text" class="col-form-label" >Введіть назву марки:</label>
+                                            <label for="message-text" class="col-form-label">Виберіть марку:</label>
+                                            @Html.DropDownListFor(n =>n.Brands, new SelectList(Model.Brands, "Id", "Name"), new { @class = "form-control", @id="addbrand" })
+                                            <label for="message-text" class="col-form-label">Введіть назву моделі:</label>
                                             <textarea class="form-control" id="message-text"></textarea>
+
                                         </div>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Відмінити</button>
-                                    <button type="button" class="btn btn-primary" id="createBrand">Зберегти</button>
+                                    <button type="button" class="btn btn-primary" id="createModel">Зберегти</button>
                                 </div>
                             </div>
                         </div>
@@ -50,8 +58,9 @@
                         <thead>
                             <tr>
                                 <th style="width:5%">#</th>
-                                <th style="width:32.5%">Модель</th>
-                                <th style="width:32.5%">Марка</th>
+                                <th style="width:20%">Модель</th>
+                                <th style="width:20%">Модель</th>
+                                <th style="width:35%"></th>
                                 <th style="width:10%"></th>
                                 <th style="width:10%"></th>
                             </tr>
@@ -62,10 +71,11 @@
 
                 <tr>
                     <td>@i.IdModel</td>
-                    <td>@Html.EditorFor(m => i.Name, null, "n" + i.IdModel)</td> 
-                   <td>@Html.DropDownListFor(n => n.Brands, new SelectList(Model.Brands, i.BrandPosition))</td>
-                    <td><input class="btn btn-info" id="@("s"+i.IdModel)" type="button" value="Зберегти" onclick="changeName(@i.IdModel)"/></td>
-                    <td><input data-toggle="confirmation" class="btn btn-danger" data-placement="left" id="@("d"+i.IdModel)" type="button"  value="Delete" /></td>
+                    <td>@Html.EditorFor(m => i.Name, null, "n" + i.IdModel)</td>
+                    <td>@Html.DropDownListFor(n => i.BrandId, new SelectList(Model.Brands, "Id", "Name", i.BrandId), new { @class = "form-control" })</td>
+                    <td><span id="@("delerr" + i.IdModel)" class="errmsgs" style="color:red;"></span></td>
+                    <td><input class="btn btn-info" id="@("s"+i.IdModel)" type="button" value="Зберегти" onclick="changeName(@i.IdModel)" /></td>
+                    <td><input data-toggle="confirmation" class="btn btn-danger" data-placement="left" id="@("d"+i.IdModel)" type="button" value="Видалити" /></td>
                 </tr>
 }
                         </tbody>
@@ -78,10 +88,12 @@
 
     </div>
 </div>
+
 <script>
-    $("#createBrand").click(function (e) {
-        $.post('@Url.Action("AddBrand", "Admin")', {
-            name: $("#message-text").first().val()
+    $("#createModel").click(function (e) {
+        $.post('@Url.Action("AddModel", "Admin")', {
+            name: $("#message-text").first().val(),
+            idBrand: $("#addbrand").options[$("#addbrand").selectedIndex].value
         },
             function (data) {
                 if (data.Success) {
@@ -94,14 +106,26 @@
     });
 
      $('[data-toggle=confirmation]').confirmation({
-        rootSelector: '[data-toggle=confirmation]',
+         rootSelector: '[data-toggle=confirmation]',
         onConfirm: function () {
-            $.post('@Url.Action("DeleteBrand", "Admin")', { id: $(this).attr("id") } , function (data) {
+            $.post('@Url.Action("DeleteModel", "Admin")', { id: $(this).attr("id") }, function (data) {
+                $(".errmsgs").html("");
                 if (data.Success) {
                     location.reload();
-            }
+                }
+                else
+                    if (data.errmsg) {
+                        var body = "Помилка видалення." + data.errmsg + ": "
+                        $.each(data.models, function (index, value) {
+                            body += "<span style='color:green;' >" +value +"</span>" + " | ";
+                        });
+                        var delerr = '#delerr' + data.jsid;
+                        $(delerr).html(body);
+                    }
+
         });
         },
         // other options
     });
-    </script>
+</script>
+ 

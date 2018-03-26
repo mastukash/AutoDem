@@ -30,7 +30,7 @@ namespace AutoDem.Controllers
 
     public class AdminModelListViewModel
     {
-        public List<string> Brands { get; set; }
+        public List<Brand> Brands { get; set; }
         public List<AdminModelViewModel> Models { get; set; }
     }
 
@@ -38,7 +38,7 @@ namespace AutoDem.Controllers
     {
         public int IdModel { get; set; }
         public string Name { get; set; }
-        public int BrandPosition { get; set; }
+        public int BrandId { get; set; }
     }
 
     public class AdminCommentViewModel
@@ -100,19 +100,62 @@ namespace AutoDem.Controllers
             var brands = await unitOfWork.Repository<Brand>().GetAllAsync();
             var models = await unitOfWork.Repository<Model>().GetAllAsync();
 
-            model.Brands = brands.Select(x => x.Name).ToList();
+            model.Brands = brands.Select(x => x).ToList();
+
 
             foreach (var m in models)
             {
                 model.Models.Add(new AdminModelViewModel()
                 {
                     IdModel = m.Id,
-                    BrandPosition = model.Brands.FindIndex(row => row == m.Brand.Name),
+                    BrandId = m.Brand.Id,
                     Name = m.Name
                 });
             }
 
             return View(model);
+        }
+        public async Task<ActionResult> AddModel(string name, string idBrand)
+        {
+            if (name == "" || name == "Поле не може бути пустим")
+                return Json(new { Success = false, error = "Поле не може бути пустим" });
+            var amodel = (await unitOfWork.Repository<Model>().GetAllAsync()).Where(x => x.Name == name).FirstOrDefault();
+            if (amodel != null)
+                return Json(new { Success = false, error = "Така модель уже зареєстрована у базі!" });
+            amodel = new Model()
+            {
+                Name = name,
+                Brand = await unitOfWork.Repository<Brand>().FindByIdAsync(Convert.ToInt32(idBrand))
+            };
+            await unitOfWork.Repository<Model>().AddAsync(amodel);
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true });
+        }
+        [HttpPost]
+        public async Task<ActionResult> DeleteModel(string id)
+        {
+            var amodel = await unitOfWork.Repository<Model>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
+            if (amodel.Autos.Count > 0)
+                return Json(new { Success = false, jsid = id.Remove(0, 1), errmsg = "Видаліть спочатку автомобілі цієї моделі", models = amodel.Autos.Select(x => $"{x.Model.Brand.Name} {x.Model.Name} {x.YearOfManufacture}") });
+            await unitOfWork.Repository<Model>().RemoveAsync(amodel);
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true, jsid = id });
+        }
+        [HttpPost]
+        public async Task<ActionResult> ChangeModel(string id, string name)
+        {
+            if (name == "" || name == "Поле не може бути пустим")
+                return Json(new { Success = false, error = "Поле не може бути пустим" });
+            var brand = (await unitOfWork.Repository<Brand>().GetAllAsync()).Where(x => x.Name == name).FirstOrDefault();
+            if (brand != null)
+                return Json(new { Success = false, error = "Така марка уже зареєстрована у базі!" });
+            brand = await unitOfWork.Repository<Brand>().FindByIdAsync(Convert.ToInt32(id));
+            brand.Name = name;
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true, jsid = id });
         }
 
         public async Task<ActionResult> AutosList()
