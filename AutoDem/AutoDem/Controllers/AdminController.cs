@@ -30,9 +30,15 @@ namespace AutoDem.Controllers
 
     public class AdminModelListViewModel
     {
-        public int Id { get; set; }
+        public List<string> Brands { get; set; }
+        public List<AdminModelViewModel> Models { get; set; }
+    }
+
+    public class AdminModelViewModel
+    {
+        public int IdModel { get; set; }
         public string Name { get; set; }
-        public string BrandName { get; set; }
+        public int BrandPosition { get; set; }
     }
 
     public class AdminCommentViewModel
@@ -83,21 +89,27 @@ namespace AutoDem.Controllers
 
             return View(model);
         }
+
         public async Task<ActionResult> ModelList()
         {
-            List<AdminModelListViewModel> model = new List<AdminModelListViewModel>();
+               AdminModelListViewModel model = new AdminModelListViewModel()
+            {
+                Models = new List<AdminModelViewModel>()
+            };
 
-            var models = await unitOfWork.Repository<Model>().GetAllAsync(); ;
+            var brands = await unitOfWork.Repository<Brand>().GetAllAsync();
+            var models = await unitOfWork.Repository<Model>().GetAllAsync();
+
+            model.Brands = brands.Select(x => x.Name).ToList();
 
             foreach (var m in models)
             {
-                var tmp = new AdminModelListViewModel()
+                model.Models.Add(new AdminModelViewModel()
                 {
-                    Id = m.Id,
-                    Name = m.Name,
-                    BrandName = m.Brand.Name
-                };
-                model.Add(tmp);
+                    IdModel = m.Id,
+                    BrandPosition = model.Brands.FindIndex(row => row == m.Brand.Name),
+                    Name = m.Name
+                });
             }
 
             return View(model);
