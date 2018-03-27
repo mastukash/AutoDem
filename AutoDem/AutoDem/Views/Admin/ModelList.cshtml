@@ -93,7 +93,7 @@
     $("#createModel").click(function (e) {
         $.post('@Url.Action("AddModel", "Admin")', {
             name: $("#message-text").first().val(),
-            idBrand: $("#addbrand").options[$("#addbrand").selectedIndex].value
+            idBrand: $("#addbrand").find(":selected").val()
         },
             function (data) {
                 if (data.Success) {
