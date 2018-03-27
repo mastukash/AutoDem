@@ -148,8 +148,8 @@ namespace AutoDem.Controllers
         {
             if (name == "" || name == "Поле не може бути пустим")
                 return Json(new { Success = false, error = "Поле не може бути пустим" });
-            var model = (await unitOfWork.Repository<Model>().GetAllAsync()).Where(x => x.Name == name).FirstOrDefault();
-            if (model != null && model.Brand.Id == idBrand )
+            var model = (await unitOfWork.Repository<Model>().GetAllAsync()).Where(x => x.Name == name && x.Brand.Id == idBrand).FirstOrDefault();
+            if (model != null)
                 return Json(new { Success = false, error = "Така модель уже зареєстрована у базі!" });
             model = await unitOfWork.Repository<Model>().FindByIdAsync(Convert.ToInt32(id));
             if (model.Brand.Id != idBrand)
