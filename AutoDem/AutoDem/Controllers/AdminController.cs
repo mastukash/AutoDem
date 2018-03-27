@@ -62,6 +62,24 @@ namespace AutoDem.Controllers
         public bool Read { get; set; }
     }
 
+    public class AdminTypeAutoViewModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class AdminFuelTypeViewModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class AdminCountryViewModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
     public class AdminController : Controller
     {
         GenericUnitOfWork unitOfWork = new GenericUnitOfWork();
@@ -69,6 +87,189 @@ namespace AutoDem.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+        public async Task<ActionResult> CountryList()
+        {
+            List<AdminCountryViewModel> model = new List<AdminCountryViewModel>();
+
+            var countries = await unitOfWork.Repository<Country>().GetAllAsync();
+
+            foreach (var country in countries)
+            {
+                var tmp = new AdminCountryViewModel()
+                {
+                    Id = country.Id,
+                    Name = country.Name
+                };
+                model.Add(tmp);
+            }
+
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<ActionResult> AddCountry(string name)
+        {
+            if (name == "" || name == "Поле не може бути пустим")
+                return Json(new { Success = false, error = "Поле не може бути пустим" });
+            var country = (await unitOfWork.Repository<Country>().GetAllAsync()).Where(x => x.Name == name).FirstOrDefault();
+            if (country != null)
+                return Json(new { Success = false, error = "Така країна зареєстрована у базі!" });
+            country = new Country()
+            {
+                Name = name
+            };
+            await unitOfWork.Repository<Country>().AddAsync(country);
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true });
+        }
+        [HttpPost]
+        public async Task<ActionResult> DeleteCountry(string id)
+        {
+            var country = await unitOfWork.Repository<Country>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
+            if (country.Autos.Count > 0)
+                return Json(new { Success = false, jsid = id.Remove(0, 1), errmsg = "Видаліть спочатку автомобілі такої країни", models = country.Autos.Select(x => $"{x.Model.Brand.Name} {x.Model.Name} {x.YearOfManufacture}") });
+            await unitOfWork.Repository<Country>().RemoveAsync(country);
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true, jsid = id });
+        }
+        [HttpPost]
+        public async Task<ActionResult> ChangeCountryName(string id, string name)
+        {
+            if (name == "" || name == "Поле не може бути пустим")
+                return Json(new { Success = false, error = "Поле не може бути пустим" });
+            var country = (await unitOfWork.Repository<Country>().GetAllAsync()).Where(x => x.Name == name).FirstOrDefault();
+            if (country != null)
+                return Json(new { Success = false, error = "Така країна уже зареєстрована у базі!" });
+            country = await unitOfWork.Repository<Country>().FindByIdAsync(Convert.ToInt32(id));
+            country.Name = name;
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true, jsid = id });
+        }
+
+        public async Task<ActionResult> FuelTypeList()
+        {
+            List<AdminFuelTypeViewModel> model = new List<AdminFuelTypeViewModel>();
+
+            var fuelsType = await unitOfWork.Repository<FuelType>().GetAllAsync(); 
+
+            foreach (var fuelType in fuelsType)
+            {
+                var tmp = new AdminFuelTypeViewModel()
+                {
+                    Id = fuelType.Id,
+                    Name = fuelType.Name
+                };
+                model.Add(tmp);
+            }
+
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<ActionResult> AddFuelType(string name)
+        {
+            if (name == "" || name == "Поле не може бути пустим")
+                return Json(new { Success = false, error = "Поле не може бути пустим" });
+            var fuelType = (await unitOfWork.Repository<FuelType>().GetAllAsync()).Where(x => x.Name == name).FirstOrDefault();
+            if (fuelType != null)
+                return Json(new { Success = false, error = "Такий тип палива уже зареєстрований у базі!" });
+            fuelType = new FuelType()
+            {
+                Name = name
+            };
+            await unitOfWork.Repository<FuelType>().AddAsync(fuelType);
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true });
+        }
+        [HttpPost]
+        public async Task<ActionResult> DeleteFuelType(string id)
+        {
+            var fuelType = await unitOfWork.Repository<FuelType>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
+            if (fuelType.Autos.Count > 0)
+                return Json(new { Success = false, jsid = id.Remove(0, 1), errmsg = "Видаліть спочатку автомобілі цього типу палива", models = fuelType.Autos.Select(x => $"{x.Model.Brand.Name} {x.Model.Name} {x.YearOfManufacture}") });
+            await unitOfWork.Repository<FuelType>().RemoveAsync(fuelType);
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true, jsid = id });
+        }
+        [HttpPost]
+        public async Task<ActionResult> ChangeFuelTypeName(string id, string name)
+        {
+            if (name == "" || name == "Поле не може бути пустим")
+                return Json(new { Success = false, error = "Поле не може бути пустим" });
+            var fuelType = (await unitOfWork.Repository<FuelType>().GetAllAsync()).Where(x => x.Name == name).FirstOrDefault();
+            if (fuelType != null)
+                return Json(new { Success = false, error = "Такий тип палива уже зареєстрований у базі!" });
+            fuelType = await unitOfWork.Repository<FuelType>().FindByIdAsync(Convert.ToInt32(id));
+            fuelType.Name = name;
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true, jsid = id });
+        }
+
+        public async Task<ActionResult> TypeAutoList()
+        {
+            List<AdminTypeAutoViewModel> model = new List<AdminTypeAutoViewModel>();
+
+            var typesAuto = await unitOfWork.Repository<TypeAuto>().GetAllAsync(); ;
+
+            foreach (var typeAuto in typesAuto)
+            {
+                var tmp = new AdminTypeAutoViewModel()
+                {
+                    Id = typeAuto.Id,
+                    Name = typeAuto.Name
+                };
+                model.Add(tmp);
+            }
+
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<ActionResult> AddTypeAuto(string name)
+        {
+            if (name == "" || name == "Поле не може бути пустим")
+                return Json(new { Success = false, error = "Поле не може бути пустим" });
+            var typeAuto = (await unitOfWork.Repository<TypeAuto>().GetAllAsync()).Where(x => x.Name == name).FirstOrDefault();
+            if (typeAuto != null)
+                return Json(new { Success = false, error = "Такий тип авто уже зареєстрований у базі!" });
+            typeAuto = new TypeAuto()
+            {
+                Name = name
+            };
+            await unitOfWork.Repository<TypeAuto>().AddAsync(typeAuto);
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true });
+        }
+        [HttpPost]
+        public async Task<ActionResult> DeleteTypeAuto(string id)
+        {
+            var typeAuto = await unitOfWork.Repository<TypeAuto>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
+            if (typeAuto.Models.Count > 0)
+                return Json(new { Success = false, jsid = id.Remove(0, 1), errmsg = "Видаліть спочатку автомобілі цього типу", models = typeAuto.Models.Select(x => $"{x.Model.Brand.Name} {x.Model.Name} {x.YearOfManufacture}") });
+            await unitOfWork.Repository<TypeAuto>().RemoveAsync(typeAuto);
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true, jsid = id });
+        }
+        [HttpPost]
+        public async Task<ActionResult> ChangeTypeAutoName(string id, string name)
+        {
+            if (name == "" || name == "Поле не може бути пустим")
+                return Json(new { Success = false, error = "Поле не може бути пустим" });
+            var typeAuto = (await unitOfWork.Repository<TypeAuto>().GetAllAsync()).Where(x => x.Name == name).FirstOrDefault();
+            if (typeAuto != null)
+                return Json(new { Success = false, error = "Такий тип авто уже зареєстрований у базі!" });
+            typeAuto = await unitOfWork.Repository<TypeAuto>().FindByIdAsync(Convert.ToInt32(id));
+            typeAuto.Name = name;
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true, jsid = id });
         }
 
         public async Task<ActionResult> BrandList()

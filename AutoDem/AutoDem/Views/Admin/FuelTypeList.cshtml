@@ -1,0 +1,119 @@
+﻿@model List<AutoDem.Controllers.AdminFuelTypeViewModel>
+
+@{
+    ViewBag.Title = "Autos List";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<script>
+    function changeName(idFuelType) {
+        var nameFuelType = $("#n" + idFuelType).val();
+        var changeName = '#delerr' + idFuelType;
+        $(".errmsgs").html("");
+        $.post('@Url.Action("ChangeFuelTypeName", "Admin")', { id: idFuelType, name: nameFuelType }, function (data) {
+            if (data.Success) {
+                $(changeName).html("Назву палива змінено");
+            }
+            else 
+                $(changeName).html("Паливо із такою назвою уже є в базі");
+        });
+    }
+    </script>
+
+<div class="page-content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Default datatable inside panel -->
+            
+            <div class="panel panel-default">
+                <div class="panel-heading"><h6 class="panel-title">Типи палива</h6></div>
+                <div class="datatable">
+                    <input class="btn btn-primary" data-toggle="modal" data-target="#AddFuelTypeModal" data-whatever="@@mdo" id="AddFuelType" type="button" value="Добавити Паливо" style="margin:10px 10px;" />
+                    <!-- Modal -->
+                    <div class="modal fade" id="AddFuelTypeModal" tabindex="-1" role="dialog" aria-labelledby="AddFuelTypeLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="AddFuelTypeLabel">Новий тип палива</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="message-text" class="col-form-label" >Введіть назву палива:</label>
+                                            <textarea class="form-control" id="message-text"></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Відмінити</button>
+                                    <button type="button" class="btn btn-primary" id="createFuelType">Зберегти</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="width:5%">#</th>
+                                <th style="width:75%">Паливо</th>
+                                <th style="width:10%"></th>
+                                <th style="width:10%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var i in Model)
+            {
+
+                <tr>
+                    <td>@i.Id</td>
+                    <td>@Html.EditorFor(m => i.Name, null, "n" + i.Id) <span id="@("delerr" + i.Id)" class="errmsgs" style="color:red;"></span></td>
+                    <td><input class="btn btn-info" id="@("s"+i.Id)" type="button" value="Зберегти" onclick="changeName(@i.Id)"/></td>
+                    <td><input data-toggle="confirmation" class="btn btn-danger" data-placement="left" id="@("d"+i.Id)" type="button"  value="Видалити" /></td>
+                </tr>
+}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- /default datatable inside panel -->
+
+        </div>
+
+    </div>
+</div>
+<script>
+    $("#createFuelType").click(function (e) {
+        $.post('@Url.Action("AddFuelType", "Admin")', {
+            name: $("#message-text").first().val()
+        },
+            function (data) {
+                if (data.Success) {
+                    location.reload();
+                }
+                else {
+                    $("#message-text").first().val(data.error);
+                }
+            });
+    });
+
+     $('[data-toggle=confirmation]').confirmation({
+         rootSelector: '[data-toggle=confirmation]',
+        onConfirm: function () {
+            $.post('@Url.Action("DeleteFuelType", "Admin")', { id: $(this).attr("id") }, function (data) {
+                $(".errmsgs").html("");
+                if (data.Success) {
+                    location.reload();
+                }
+                else
+                    if (data.errmsg) {
+                        var body = "Помилка видалення." + data.errmsg + ": "
+                        $.each(data.models, function (index, value) {
+                            body += "<span style='color:green;' >" +value +"</span>" + " | ";
+                        });
+                        var delerr = '#delerr' + data.jsid;
+                        $(delerr).html(body);
+                    }
+        });
+        },
+        // other options
+    });
+    </script>
