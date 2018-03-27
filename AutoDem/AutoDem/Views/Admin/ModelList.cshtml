@@ -7,10 +7,11 @@
 <script>
     function changeName(idModel) {
         var nameModel = $("#n" + idModel).val();
-        var changeName = '#delerr' + idModel;
+        //var changeName = '#delerr' + idModel;
+        var brandId = $("#b"+idModel).find(":selected").val();
         //var idBrand = $("#addbrand").options[$("#addbrand").selectedIndex].value;
         $(".errmsgs").html("");
-        $.post('@Url.Action("ChangeModel", "Admin")', { id: idModel, name: nameModel }, function (data) {
+        $.post('@Url.Action("ChangeModel", "Admin")', { id: idModel, name: nameModel, idBrand: brandId   }, function (data) {
             if (data.Success) {
                 $(changeName).html("Назву автомобіля змінено");
             }
@@ -72,7 +73,8 @@
                 <tr>
                     <td>@i.IdModel</td>
                     <td>@Html.EditorFor(m => i.Name, null, "n" + i.IdModel)</td>
-                    <td>@Html.DropDownListFor(n => i.BrandId, new SelectList(Model.Brands, "Id", "Name", i.BrandId), new { @class = "form-control" })</td>
+                    <td>@Html.DropDownListFor(n => i.BrandId, new SelectList(Model.Brands, "Id", "Name", i.BrandId), new { @class = "form-control",
+                       @id = "b"+i.IdModel })</td>
                     <td><span id="@("delerr" + i.IdModel)" class="errmsgs" style="color:red;"></span></td>
                     <td><input class="btn btn-info" id="@("s"+i.IdModel)" type="button" value="Зберегти" onclick="changeName(@i.IdModel)" /></td>
                     <td><input data-toggle="confirmation" class="btn btn-danger" data-placement="left" id="@("d"+i.IdModel)" type="button" value="Видалити" /></td>

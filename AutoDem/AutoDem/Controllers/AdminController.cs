@@ -144,15 +144,20 @@ namespace AutoDem.Controllers
             return Json(new { Success = true, jsid = id });
         }
         [HttpPost]
-        public async Task<ActionResult> ChangeModel(string id, string name)
+        public async Task<ActionResult> ChangeModel(string id, string name , int idBrand)
         {
             if (name == "" || name == "Поле не може бути пустим")
                 return Json(new { Success = false, error = "Поле не може бути пустим" });
-            var brand = (await unitOfWork.Repository<Brand>().GetAllAsync()).Where(x => x.Name == name).FirstOrDefault();
-            if (brand != null)
-                return Json(new { Success = false, error = "Така марка уже зареєстрована у базі!" });
-            brand = await unitOfWork.Repository<Brand>().FindByIdAsync(Convert.ToInt32(id));
-            brand.Name = name;
+            var model = (await unitOfWork.Repository<Model>().GetAllAsync()).Where(x => x.Name == name).FirstOrDefault();
+            if (model != null)
+                return Json(new { Success = false, error = "Така модель уже зареєстрована у базі!" });
+            model = await unitOfWork.Repository<Model>().FindByIdAsync(Convert.ToInt32(id));
+            if (model.Brand.Id != idBrand)
+            {
+                model.Brand = await unitOfWork.Repository<Brand>().FindByIdAsync(idBrand);
+            }
+            model.Name = name;
+
             await unitOfWork.SaveAsync();
 
             return Json(new { Success = true, jsid = id });
