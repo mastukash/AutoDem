@@ -16,6 +16,27 @@ namespace AutoDem.Controllers
         public int UnreadMessages { get; set; }
         public int AutosCount { get; set; }
     }
+
+    public class AdminAutoViewModel
+    {
+        public int Year{ get; set; }
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+        public string Color { get; set; }
+        public DateTime DatePublication { get; set; } = DateTime.Now;
+        public int Mileage { get; set; }
+        public double EngineCapacity { get; set; }
+        public string Drive { get; set; }
+        public string Transmission { get; set; }
+        public bool SoldOut { get; set; }
+        public Model Model { get; set; }
+        public List<AdminTypeAutoViewModel> Type { get; set; } = new List<AdminTypeAutoViewModel>();
+        public List<AdminFuelTypeViewModel> FuelType { get; set; } = new List<AdminFuelTypeViewModel>();
+        public List<AdminCountryViewModel> Country { get; set; } = new List<AdminCountryViewModel>();
+        public List<AdminAdditionalOptionViewModel> AdditionalOptions { get; set; } = new List<AdminAdditionalOptionViewModel>();
+        public List<PhotoAuto> PhotoAutos { get; set; } = new List<PhotoAuto>();
+
+    }
     public class AdminAutosListViewModel
     {
         public int IdAuto { get; set; }
@@ -68,6 +89,12 @@ namespace AutoDem.Controllers
         public string Name { get; set; }
     }
 
+    public class AdminAdditionalOptionViewModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
     public class AdminFuelTypeViewModel
     {
         public int Id { get; set; }
@@ -87,6 +114,67 @@ namespace AutoDem.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+        public async Task<ActionResult> AdditionalOptionList()
+        {
+            List<AdminAdditionalOptionViewModel> model = new List<AdminAdditionalOptionViewModel>();
+
+            var additionalOptions = await unitOfWork.Repository<AdditionalOption>().GetAllAsync();
+
+            foreach (var additionalOption in additionalOptions)
+            {
+                var tmp = new AdminAdditionalOptionViewModel()
+                {
+                    Id = additionalOption.Id,
+                    Name = additionalOption.characteristic
+                };
+                model.Add(tmp);
+            }
+
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<ActionResult> AddAdditionalOption(string name)
+        {
+            if (name == "" || name == "Поле не може бути пустим")
+                return Json(new { Success = false, error = "Поле не може бути пустим" });
+            var additionalOption = (await unitOfWork.Repository<AdditionalOption>().GetAllAsync()).Where(x => x.characteristic== name).FirstOrDefault();
+            if (additionalOption != null)
+                return Json(new { Success = false, error = "Така характеристика уже зареєстрована у базі!" });
+            additionalOption = new AdditionalOption()
+            {
+                characteristic = name
+            };
+            await unitOfWork.Repository<AdditionalOption>().AddAsync(additionalOption);
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true });
+        }
+        [HttpPost]
+        public async Task<ActionResult> DeleteAdditionalOption(string id)
+        {
+            var additionalOption = await unitOfWork.Repository<AdditionalOption>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
+            if (additionalOption.Autos.Count > 0)
+                return Json(new { Success = false, jsid = id.Remove(0, 1), errmsg = "Видаліть спочатку автомобілі такої характеристики", models = additionalOption.Autos.Select(x => $"{x.Model.Brand.Name} {x.Model.Name} {x.YearOfManufacture}") });
+            await unitOfWork.Repository<AdditionalOption>().RemoveAsync(additionalOption);
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true, jsid = id });
+        }
+        [HttpPost]
+        public async Task<ActionResult> ChangeAdditionalOptionName(string id, string name)
+        {
+            if (name == "" || name == "Поле не може бути пустим")
+                return Json(new { Success = false, error = "Поле не може бути пустим" });
+            var additionalOption = (await unitOfWork.Repository<AdditionalOption>().GetAllAsync()).Where(x => x.characteristic == name).FirstOrDefault();
+            if (additionalOption != null)
+                return Json(new { Success = false, error = "Така характеристика уже зареєстрована у базі!" });
+            additionalOption = await unitOfWork.Repository<AdditionalOption>().FindByIdAsync(Convert.ToInt32(id));
+            additionalOption.characteristic = name;
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true, jsid = id });
         }
 
         public async Task<ActionResult> CountryList()
