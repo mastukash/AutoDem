@@ -37,6 +37,14 @@ namespace AutoDem.Controllers
         public List<PhotoAuto> PhotoAutos { get; set; } = new List<PhotoAuto>();
 
     }
+    public class AdminServiceListViewModel
+    {
+        public int Id { get; set; }
+
+        public string Title { get; set; }
+
+        public string Body { get; set; }
+    }
     public class AdminAutosListViewModel
     {
         public int IdAuto { get; set; }
@@ -114,6 +122,80 @@ namespace AutoDem.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+
+        public async Task<ActionResult> ServiceList()
+        {
+            List<AdminServiceListViewModel> model = new List<AdminServiceListViewModel>();
+
+            var services = await unitOfWork.Repository<Service>().GetAllAsync();
+
+            foreach (var service in services)
+            {
+                var tmp = new AdminServiceListViewModel()
+                {
+                    Id = service.Id,
+                    Body = service.Body,
+                    Title = service.Title
+                    
+                };
+                model.Add(tmp);
+            }
+
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<ActionResult> ChangeService(string id, string title , string bodyService)
+        {
+            if (title == "" || title == "Поле не може бути пустим")
+                return Json(new { Success = false, error = "Поле не може бути пустим" });
+            if (bodyService == "" || bodyService == "Поле не може бути пустим")
+                return Json(new { Success = false, error = "Поле не може бути пустим" });
+            var service = (await unitOfWork.Repository<Service>().GetAllAsync()).Where(x => x.Title == title).FirstOrDefault();
+            if (service != null)
+                return Json(new { Success = false, error = "Така характеристика уже зареєстрована у базі!" });
+            service = await unitOfWork.Repository<Service>().FindByIdAsync(Convert.ToInt32(id));
+            service.Title = title;
+            service.Body = bodyService;
+
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true, jsid = id });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddService(string title , string description)
+        {
+            if (title == "" || title == "Поле не може бути пустим")
+                return Json(new { Success = false, error = "Поле не може бути пустим" });
+            if (description == "" || description == "Поле не може бути пустим")
+                return Json(new { Success = false, error = "Поле не може бути пустим" });
+
+            var service = (await unitOfWork.Repository<Service>().GetAllAsync()).Where(x => x.Title == title).FirstOrDefault();
+            if (service != null)
+                return Json(new { Success = false, error = "Така послуга уже зареєстрована у базі!" });
+            service = new Service()
+            {
+                Title = title,
+                Body = description
+            };
+            await unitOfWork.Repository<Service>().AddAsync(service);
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeleteService(string id)
+        {
+            var service = await unitOfWork.Repository<Service>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
+            if (service.ServiceDetail.Count > 0)
+                return Json(new { Success = false, jsid = id.Remove(0, 1), errmsg = "Видаліть спочатку деталі", details = service.ServiceDetail.Select(x => $"{x.Name}") });
+            await unitOfWork.Repository<Service>().RemoveAsync(service);
+            await unitOfWork.SaveAsync();
+
+            return Json(new { Success = true, jsid = id });
         }
 
         public async Task<ActionResult> AdditionalOptionList()

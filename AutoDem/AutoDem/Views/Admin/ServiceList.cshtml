@@ -1,0 +1,137 @@
+﻿@model List<AutoDem.Controllers.AdminServiceListViewModel>
+
+@{
+    ViewBag.Title = "Autos List";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<script>
+    function changeName(idService) {
+        var titleService = $("#n" + idService).val();
+        var bodyService = $("#body" + idService).val();
+        var changetitle = '#delerr' + idService;
+        var changebody = '#delerrr' + idService;
+
+        $(".errmsgs").html("");
+        $.post('@Url.Action("ChangeService", "Admin")', { id: idService, title: titleService, bodyService: bodyService }, function (data) {
+            if (data.Success) {
+                $(changetitle).html("Заголовок змінено");
+            }
+            else 
+                $(changetitle).html("Такий заголовок уже є в базі");
+
+            if (data.Success) {
+                $(changebody).html("Опис змінено");
+            }
+            else
+                $(changebody).html("Опис уже є в базі");
+        });
+    }
+    </script>
+
+<div class="page-content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Default datatable inside panel -->
+            
+            <div class="panel panel-default">
+                <div class="panel-heading"><h6 class="panel-title">Послуги</h6></div>
+                <div class="datatable">
+                    <input class="btn btn-primary" data-toggle="modal" data-target="#AddServiceModal" data-whatever="@@mdo" id="AddService" type="button" value="Добавити послугу" style="margin:10px 10px;" />
+                    <!-- Modal -->
+                    <div class="modal fade" id="AddServiceModal" tabindex="-1" role="dialog" aria-labelledby="AddServiceLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="AddServiceLabel">Нова послуга</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="message-text" class="col-form-label" >Введіть назву послуги:</label>
+                                            <textarea class="form-control" id="addTitle"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="message-text" class="col-form-label">Введіть опис послуги:</label>
+                                            <textarea class="form-control" id="addDescriptoin"></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Відмінити</button>
+                                    <button type="button" class="btn btn-primary" id="createService">Зберегти</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="width:5%">#</th>
+                                <th style="width:25%">Заголовок</th>
+                                <th style="width:50%">Опис</th>
+                                <th style="width:10%"></th>
+                                <th style="width:10%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var i in Model)
+            {
+
+                <tr>
+                    <td>@i.Id</td>
+                    <td>@Html.EditorFor(m => i.Title, null, "n" + i.Id) <span id="@("delerr" + i.Id)" class="errmsgs" style="color:red;"></span></td>
+                    <td>@Html.EditorFor(m => i.Body, null, "body" + i.Id) <span id="@("delerrr" + i.Id)" class="errmsgs" style="color:red;"></span></td>
+                    <td><input class="btn btn-info" id="@("s"+i.Id)" type="button" value="Зберегти" onclick="changeName(@i.Id)"/></td>
+                    <td><input data-toggle="confirmation" class="btn btn-danger" data-placement="left" id="@("d"+i.Id)" type="button"  value="Видалити" /></td>
+                </tr>
+}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- /default datatable inside panel -->
+
+        </div>
+
+    </div>
+</div>
+<script>
+    $("#createService").click(function (e) {
+        $.post('@Url.Action("AddService", "Admin")', {
+            title: $("#addTitle").first().val(),
+            description: $("#addDescriptoin").first().val()
+
+        },
+            function (data) {
+                if (data.Success) {
+                    location.reload();
+                }
+                else {
+                    $("#message-text").first().val(data.error);
+                }
+            });
+    });
+
+     $('[data-toggle=confirmation]').confirmation({
+         rootSelector: '[data-toggle=confirmation]',
+        onConfirm: function () {
+            $.post('@Url.Action("DeleteService", "Admin")', { id: $(this).attr("id") }, function (data) {
+                $(".errmsgs").html("");
+                if (data.Success) {
+                    location.reload();
+                }
+                else
+                    if (data.errmsg) {
+                        var body = "Помилка видалення." + data.errmsg + ": "
+                        $.each(data.details, function (index, value) {
+                            body += "<span style='color:green;' >" +value +"</span>" + " | ";
+                        });
+                        var delerr = '#delerr' + data.jsid;
+                        $(delerr).html(body);
+                    }
+
+        });
+        },
+        // other options
+    });
+    </script>
