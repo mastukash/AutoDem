@@ -1,0 +1,174 @@
+﻿@model AutoDem.Controllers.AdminAutoViewModel
+@{
+    ViewBag.Title = "Створення автомобіля";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@{
+    int itemPhoto = 0;
+    string file = "file" + @itemPhoto;
+}
+<div class="page-content">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Новий автомобіль</h2>
+            <div class="panel panel-default">
+                @*<div class="panel-heading"><h6 class="panel-title ">Заповніть характеристики автомобіля</h6></div>*@
+                @using (Html.BeginForm("CreateAuto", "Admin", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div>
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger", role = "form", enctype = "multipart/form-data" })
+                        <hr />
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width:15%">Назва</th>
+                                    <th style="width:15%">Характеристики</th>
+                                    <th style="width:70%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@Html.DisplayNameFor(model => model.PhotoAutos)</td>
+                                    <td>
+                                        <span id="output">
+                                            @*тут також працює обробник події на клік в файлі Scripts/customjs/jsforphoto.js*@
+                                            <img src="~/images/Autos/@Html.DisplayFor(model =>model.PhotoAutos[itemPhoto].PathToPhoto)" style="max-height:150px;max-width:150px;" alt="" />
+                                            <input type="file" id="@file" name="@file" />
+                                        </span>
+                                    </td>
+                                    <td></td>
+                                </tr>
+
+                                <tr>
+                                    <td>@Html.DisplayNameFor(model => model.Brand) та @Html.DisplayNameFor(model => model.Model)</td>
+                                    <td>
+                                        @Html.DropDownListFor(n => n.Brand, new SelectList(Model.Brand, "Id", "Name"), new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Brand, "", new { @class = "text-danger" })
+                                    </td>
+                                    <td>
+                                        @Html.DropDownListFor(n => n.Model, new SelectList(Model.Model, "Id", "Name"), new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Model, "", new { @class = "text-danger" })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.DisplayNameFor(model => model.Country)</td>
+                                    <td>@Html.DropDownListFor(n => n.Country, new SelectList(Model.Country, "Id", "Name"), new { @class = "form-control" })</td>
+                                    <td>@Html.ValidationMessageFor(m => m.Country, "", new { @class = "text-danger" })</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.DisplayNameFor(model => model.Type)</td>
+                                    <td>@Html.DropDownListFor(n => n.Type, new SelectList(Model.Type, "Id", "Name"), new { @class = "form-control" })</td>
+                                    <td>@Html.ValidationMessageFor(m => m.Type, "", new { @class = "text-danger" })</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.DisplayNameFor(model => model.FuelType)</td>
+                                    <td>@Html.DropDownListFor(n => n.FuelType, new SelectList(Model.FuelType, "Id", "Name"), new { @class = "form-control" })</td>
+                                    <td>@Html.ValidationMessageFor(m => m.FuelType, "", new { @class = "text-danger" })</td>
+                                </tr>
+
+                                <tr>
+                                    <td>@Html.DisplayNameFor(model => model.Color)</td>
+                                    <td>@Html.EditorFor(model => model.Color)</td>
+                                    <td>@Html.ValidationMessageFor(m => m.Color, "", new { @class = "text-danger" })</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.DisplayNameFor(model => model.Year)</td>
+                                    <td>@Html.EditorFor(model => model.Year)</td>
+                                    <td>@Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.DisplayNameFor(model => model.Price)</td>
+                                    <td>@Html.EditorFor(model => model.Price)</td>
+                                    <td>@Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.DisplayNameFor(model => model.Mileage)</td>
+                                    <td>@Html.EditorFor(model => model.Mileage)</td>
+                                    <td>@Html.ValidationMessageFor(m => m.Mileage, "", new { @class = "text-danger" })</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.DisplayNameFor(model => model.EngineCapacity)</td>
+                                    <td>@Html.EditorFor(model => model.EngineCapacity)</td>
+                                    <td>@Html.ValidationMessageFor(m => m.EngineCapacity, "", new { @class = "text-danger" })</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.DisplayNameFor(model => model.Drive)</td>
+                                    <td>@Html.EditorFor(model => model.Drive)</td>
+                                    <td>@Html.ValidationMessageFor(m => m.Drive, "", new { @class = "text-danger" })</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.DisplayNameFor(model => model.Transmission)</td>
+                                    <td>@Html.EditorFor(model => model.Transmission)</td>
+                                    <td>@Html.ValidationMessageFor(m => m.Transmission, "", new { @class = "text-danger" })</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.DisplayNameFor(model => model.SoldOut)</td>
+                                    <td>@Html.EditorFor(model => model.SoldOut)</td>
+                                    <td>@Html.ValidationMessageFor(m => m.SoldOut, "", new { @class = "text-danger" })</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.DisplayNameFor(model => model.Description)</td>
+                                    <td colspan="2">
+                                        <!-- WYSIWYG editor inside panel -->
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading"><h6 class="panel-title"><i class="fa fa-pencil"></i> Введіть опис автомобіля</h6></div>
+                                            <div class="panel-body">
+                                                <textarea class="editor" id="Description" name="Description" placeholder="Опис автомобіля..."></textarea>
+                                                <div class="form-actions text-right">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.DisplayNameFor(model => model.AdditionalOptions)</td>
+                                    <td colspan="2">
+
+                                        @foreach (var i in Model.AdditionalOptions)
+                                        {
+                                            <div style="display:inline-block; width:150px; font-size:12pt;">
+                                                <span style="margin:5px 10px;">@Html.CheckBox(@i.Name, @i.Available)</span>
+                                                <span style="margin:5px 10px"> @i.Name</span>
+                                            </div>
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <p><input type="submit" value="OK" class="btn btn-default" /></p>
+                    </div>
+                }
+                <p>
+                    @Html.ActionLink("Back to List", "AutosList")
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function handleFileSelect(evt) {
+        var file = evt.target.files; // FileList object
+        var f = file[0];
+        // Only process image files.
+        if (!f.type.match('image.*')) {
+            alert("Image only please....");
+        }
+        var reader = new FileReader();
+        // Closure to capture the file information.
+        reader.onload = (function (theFile) {
+            return function (e) {
+                $("#output").html(['<img class="thumb" style="max-height:150px;max-width:150px;" title="', escape(theFile.name), '" src="', e.target.result, '" />'].join(''));
+            };
+        })(f);
+        // Read in the image file as a data URL.
+        reader.readAsDataURL(f);
+    }
+    document.getElementById("@file").addEventListener('change', handleFileSelect, false);
+    @itemPhoto++;
+</script>

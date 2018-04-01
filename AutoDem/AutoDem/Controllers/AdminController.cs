@@ -2,6 +2,7 @@
 using AutoDem.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -17,26 +18,6 @@ namespace AutoDem.Controllers
         public int AutosCount { get; set; }
     }
 
-    public class AdminAutoViewModel
-    {
-        public int Year{ get; set; }
-        public string Description { get; set; }
-        public decimal Price { get; set; }
-        public string Color { get; set; }
-        public DateTime DatePublication { get; set; } = DateTime.Now;
-        public int Mileage { get; set; }
-        public double EngineCapacity { get; set; }
-        public string Drive { get; set; }
-        public string Transmission { get; set; }
-        public bool SoldOut { get; set; }
-        public Model Model { get; set; }
-        public List<AdminTypeAutoViewModel> Type { get; set; } = new List<AdminTypeAutoViewModel>();
-        public List<AdminFuelTypeViewModel> FuelType { get; set; } = new List<AdminFuelTypeViewModel>();
-        public List<AdminCountryViewModel> Country { get; set; } = new List<AdminCountryViewModel>();
-        public List<AdminAdditionalOptionViewModel> AdditionalOptions { get; set; } = new List<AdminAdditionalOptionViewModel>();
-        public List<PhotoAuto> PhotoAutos { get; set; } = new List<PhotoAuto>();
-
-    }
     public class AdminServiceListViewModel
     {
         public int Id { get; set; }
@@ -115,6 +96,52 @@ namespace AutoDem.Controllers
         public string Name { get; set; }
     }
 
+    public class AdminAutoViewModel
+    {
+        [Display(Name = "Марка автомобіля")]
+        public List<Brand> Brand { get; set; }
+        [Display(Name = "Модель автомобіля")]
+        public List<Model> Model { get; set; }
+        [Display(Name = "Країна виробник")]
+        public List<AdminCountryViewModel> Country { get; set; } = new List<AdminCountryViewModel>();
+        [Display(Name = "Тип автомобіля")]
+        public List<AdminTypeAutoViewModel> Type { get; set; } = new List<AdminTypeAutoViewModel>();
+        [Display(Name = "Тип двигуна")]
+        public List<AdminFuelTypeViewModel> FuelType { get; set; } = new List<AdminFuelTypeViewModel>();
+        [Display(Name = "Колір автомобіля")]
+        public string Color { get; set; } = "";
+        [Display(Name = "Рік випуску")]
+        [Range(typeof(int), "1950", "2050", ErrorMessage = "Рік повинен бути в діапазоні від 1950 до 2050")]
+        public int Year { get; set; } = 2018;
+        [Display(Name = "Ціна")]
+        public decimal Price { get; set; } = 5000;
+        [Display(Name = "Пробіг")]
+        public int Mileage { get; set; } = 0;
+        [Display(Name = "об'єм двигуна")]
+        public double EngineCapacity { get; set; } = 0.0;
+        [Display(Name = "Коробка передач???")]
+        public string Drive { get; set; } = "";
+        [Display(Name = "Трансмісія")]
+        public string Transmission { get; set; } = "";
+        [Display(Name = "Продано")]
+        public bool SoldOut { get; set; } = false;
+        [Display(Name = "Опис")]
+        public string Description { get; set; } = "";              
+        [Display(Name = "Додаткові характеристики")]
+        public List<AdminAutoAdditionalOptionViewModel> AdditionalOptions { get; set; } = new List<AdminAutoAdditionalOptionViewModel>();
+        [Display(Name = "Фотографії автомобіля")]
+        public List<PhotoAuto> PhotoAutos { get; set; } = new List<PhotoAuto>();
+        [Display(Name = "Дата публікації автомобіля")]
+        public DateTime DatePublication { get; set; } = DateTime.Now;
+
+    }
+
+    public class AdminAutoAdditionalOptionViewModel
+    {
+        public string Name { get; set; }
+        public bool Available { get; set; }
+    }
+
     public class AdminController : Controller
     {
         GenericUnitOfWork unitOfWork = new GenericUnitOfWork();
@@ -124,7 +151,51 @@ namespace AutoDem.Controllers
             return View();
         }
 
+        public async Task<ActionResult> TypeAutoList()
+        {
+            List<AdminTypeAutoViewModel> model = new List<AdminTypeAutoViewModel>();
 
+            var typesAuto = await unitOfWork.Repository<TypeAuto>().GetAllAsync(); ;
+
+            foreach (var typeAuto in typesAuto)
+            {
+                var tmp = new AdminTypeAutoViewModel()
+                {
+                    Id = typeAuto.Id,
+                    Name = typeAuto.Name
+                };
+                model.Add(tmp);
+            }
+
+            return View(model);
+        }
+        public async Task<ActionResult> CreateAuto()
+        {
+            var brandes = await unitOfWork.Repository<Brand>().GetAllAsync();
+            var mmodel = (await unitOfWork.Repository<Brand>().FindByIdAsync(1)).Models;
+            var types = await unitOfWork.Repository<TypeAuto>().GetAllAsync();
+            var fuelTypes = await unitOfWork.Repository<FuelType>().GetAllAsync();
+            var additionalOptions = await unitOfWork.Repository<AdditionalOption>().GetAllAsync();
+            var countires = await unitOfWork.Repository<Country>().GetAllAsync();
+
+            AdminAutoViewModel auto = new AdminAutoViewModel()
+            {
+                Brand = brandes.ToList(),
+                Model = mmodel,
+                Type = types.Select(x=> new AdminTypeAutoViewModel{Id = x.Id, Name = x.Name }).ToList(),
+                FuelType = fuelTypes.Select(x => new AdminFuelTypeViewModel { Id = x.Id, Name = x.Name }).ToList(),
+                AdditionalOptions = additionalOptions.Select(x => new AdminAutoAdditionalOptionViewModel { Name = x.characteristic, Available = false }).ToList(),
+                Country = countires.Select(x => new AdminCountryViewModel { Id = x.Id, Name = x.Name }).ToList(),
+                PhotoAutos = new List<PhotoAuto>() { new PhotoAuto() { } }
+            };
+            return View(auto);
+        }
+
+        [HttpPost]
+        public ActionResult CreateAuto(AdminAutoViewModel model)
+        {
+            return View("Index");
+        }
         public async Task<ActionResult> ServiceList()
         {
             List<AdminServiceListViewModel> model = new List<AdminServiceListViewModel>();
@@ -381,24 +452,7 @@ namespace AutoDem.Controllers
             return Json(new { Success = true, jsid = id });
         }
 
-        public async Task<ActionResult> TypeAutoList()
-        {
-            List<AdminTypeAutoViewModel> model = new List<AdminTypeAutoViewModel>();
-
-            var typesAuto = await unitOfWork.Repository<TypeAuto>().GetAllAsync(); ;
-
-            foreach (var typeAuto in typesAuto)
-            {
-                var tmp = new AdminTypeAutoViewModel()
-                {
-                    Id = typeAuto.Id,
-                    Name = typeAuto.Name
-                };
-                model.Add(tmp);
-            }
-
-            return View(model);
-        }
+       
         [HttpPost]
         public async Task<ActionResult> AddTypeAuto(string name)
         {
