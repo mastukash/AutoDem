@@ -3,11 +3,6 @@
     ViewBag.Title = "Створення автомобіля";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
-
-@{
-    int itemPhoto = 0;
-    string file = "file" + @itemPhoto;
-}
 <div class="page-content">
     <div class="row">
         <div class="col-md-12">
@@ -32,14 +27,15 @@
                             <tbody>
                                 <tr>
                                     <td>@Html.DisplayNameFor(model => model.PhotoAutos)</td>
-                                    <td>
+                                    <td colspan="2">
                                         <span id="output">
                                             @*тут також працює обробник події на клік в файлі Scripts/customjs/jsforphoto.js*@
-                                            <img src="~/images/Autos/@Html.DisplayFor(model =>model.PhotoAutos[itemPhoto].PathToPhoto)" style="max-height:150px;max-width:150px;" alt="" />
-                                            <input type="file" id="@file" name="@file" />
+                                            @*<img src="~/images/Autos/@Html.DisplayFor(model =>model.PhotoAutos[itemPhoto].PathToPhoto)" style="max-height:150px;max-width:150px;" alt="" />*@
+                                            <span class ="sdiv" style="border:1px solid black; padding:5px; display:inline-block; margin:5px;">
+                                                <input type="file" id="file0" name="file0" />
+                                            </span>
                                         </span>
                                     </td>
-                                    <td></td>
                                 </tr>
 
                                 <tr>
@@ -152,6 +148,7 @@
     </div>
 </div>
 <script>
+    var numbPhoto = 1;
     function handleFileSelect(evt) {
         var file = evt.target.files; // FileList object
         var f = file[0];
@@ -163,12 +160,28 @@
         // Closure to capture the file information.
         reader.onload = (function (theFile) {
             return function (e) {
-                $("#output").html(['<img class="thumb" style="max-height:150px;max-width:150px;" title="', escape(theFile.name), '" src="', e.target.result, '" />'].join(''));
+                var lastDiv = $(".sdiv").last();
+                lastDiv.append(['<img class="thumb" style="max-height:150px;max-width:150px;" title="', escape(theFile.name), '" src="', e.target.result, '" />']
+                    .join(''));
+                $("#output").append(lastDiv);
+                var sdiv = $('<span />', {
+                    class:"sdiv",
+                    style: "border: 1px solid black; padding: 5px; display: inline-block; margin:5px;"
+                });
+                var elementInput = $('<input/>', {
+                    type: "file",
+                    id: "file" + numbPhoto,
+                    name: "file" + numbPhoto,
+                    change: handleFileSelect
+                });  
+                sdiv.append(elementInput);
+                $("#output").append(sdiv);
+               
             };
         })(f);
         // Read in the image file as a data URL.
         reader.readAsDataURL(f);
     }
-    document.getElementById("@file").addEventListener('change', handleFileSelect, false);
-    @itemPhoto++;
+    document.getElementById("file0").addEventListener('change', handleFileSelect, false);
+    
 </script>
