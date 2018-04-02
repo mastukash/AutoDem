@@ -1,0 +1,133 @@
+﻿@model AutoDem.Controllers.AdminServiceDetalListViewModel
+
+@{
+    ViewBag.Title = "Autos List";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<script>
+    function changeName(idDetail) {
+        var nameDetail = $("#n" + idDetail).val();
+        //var changeName = '#delerr' + idDetail;
+        var serviceId = $("#b"+idDetail).find(":selected").val();
+        //var idService = $("#addservice").options[$("#addservice").selectedIndex].value;
+        $(".errmsgs").html("");
+        $.post('@Url.Action("ChangeDetail", "Admin")', { id: idDetail, name: nameDetail, idService: serviceId   }, function (data) {
+            if (data.Success) {
+                $(changeName).html("Назву автомобіля змінено");
+            }
+            else
+                $(changeName).html("Модель із такою назвою уже є в базі");
+        });
+    }
+</script>
+
+<div class="page-content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Default datatable inside panel -->
+            
+            <div class="panel panel-default">
+                <div class="panel-heading"><h6 class="panel-title">моделі автомобілів</h6></div>
+                <div class="datatable">
+                    <input class="btn btn-primary" data-toggle="modal" data-target="#addserviceModal" data-whatever="@@mdo" id="addservice" type="button" value="Добавити марку" style="margin:10px 10px;" />
+                    <!-- Modal -->
+                    <div class="modal fade" id="addserviceModal" tabindex="-1" role="dialog" aria-labelledby="addserviceLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addserviceLabel">Нова опція автомобіля</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="message-text" class="col-form-label">Виберіть марку:</label>
+                                            @Html.DropDownListFor(n =>n.Services, new SelectList(Model.Services, "Id", "Title"), new { @class = "form-control", @id="addservice" })
+                                            <label for="message-text" class="col-form-label">Введіть назву моделі:</label>
+                                            <textarea class="form-control" id="message-text"></textarea>
+
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Відмінити</button>
+                                    <button type="button" class="btn btn-primary" id="createDetail">Зберегти</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="width:5%">#</th>
+                                <th style="width:20%">Модель</th>
+                                <th style="width:20%">Модель</th>
+                                <th style="width:35%"></th>
+                                <th style="width:10%"></th>
+                                <th style="width:10%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var i in Model.Details)
+            {
+
+                <tr>
+                    <td>@i.idDetail</td>
+                    <td>@Html.EditorFor(m => i.Name, null, "n" + i.idDetail)</td>
+                    <td>@Html.DropDownListFor(n => i.idService, new SelectList(Model.Services, "Id", "Title", i.idService), new { @class = "form-control",
+                       @id = "b"+i.idDetail })</td>
+                    <td><span id="@("delerr" + i.idDetail)" class="errmsgs" style="color:red;"></span></td>
+                    <td><input class="btn btn-info" id="@("s"+i.idDetail)" type="button" value="Зберегти" onclick="changeName(@i.idDetail)" /></td>
+                    <td><input data-toggle="confirmation" class="btn btn-danger" data-placement="left" id="@("d"+i.idDetail)" type="button" value="Видалити" /></td>
+                </tr>
+}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- /default datatable inside panel -->
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $("#createDetail").click(function (e) {
+        $.post('@Url.Action("AddDetail", "Admin")', {
+            name: $("#message-text").first().val(),
+            idService: $("#addservice").find(":selected").val()
+        },
+            function (data) {
+                if (data.Success) {
+                    location.reload();
+                }
+                else {
+                    $("#message-text").first().val(data.error);
+                }
+            });
+    });
+
+     $('[data-toggle=confirmation]').confirmation({
+         rootSelector: '[data-toggle=confirmation]',
+        onConfirm: function () {
+            $.post('@Url.Action("DeleteDetail", "Admin")', { id: $(this).attr("id") }, function (data) {
+                $(".errmsgs").html("");
+                if (data.Success) {
+                    location.reload();
+                }
+                else
+                    if (data.errmsg) {
+                        var body = "Помилка видалення." + data.errmsg + ": "
+                        $.each(data.Details, function (index, value) {
+                            body += "<span style='color:green;' >" +value +"</span>" + " | ";
+                        });
+                        var delerr = '#delerr' + data.jsid;
+                        $(delerr).html(body);
+                    }
+
+        });
+        },
+        // other options
+    });
+</script>
+ 
