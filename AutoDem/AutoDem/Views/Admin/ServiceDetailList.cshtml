@@ -11,7 +11,7 @@
         var serviceId = $("#b"+idDetail).find(":selected").val();
         //var idService = $("#addservice").options[$("#addservice").selectedIndex].value;
         $(".errmsgs").html("");
-        $.post('@Url.Action("ChangeDetail", "Admin")', { id: idDetail, name: nameDetail, idService: serviceId   }, function (data) {
+        $.post('@Url.Action("ChangeServiceDetail", "Admin")', { id: idDetail, name: nameDetail, idService: serviceId   }, function (data) {
             if (data.Success) {
                 $(changeName).html("Назву автомобіля змінено");
             }
@@ -29,7 +29,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading"><h6 class="panel-title">моделі автомобілів</h6></div>
                 <div class="datatable">
-                    <input class="btn btn-primary" data-toggle="modal" data-target="#addserviceModal" data-whatever="@@mdo" id="addservice" type="button" value="Добавити марку" style="margin:10px 10px;" />
+                    <input class="btn btn-primary" data-toggle="modal" data-target="#addserviceModal" data-whatever="@@mdo" id="Addservice" type="button" value="Добавити послугу" style="margin:10px 10px;" />
                     <!-- Modal -->
                     <div class="modal fade" id="addserviceModal" tabindex="-1" role="dialog" aria-labelledby="addserviceLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
@@ -41,7 +41,7 @@
                                     <form>
                                         <div class="form-group">
                                             <label for="message-text" class="col-form-label">Виберіть марку:</label>
-                                            @Html.DropDownListFor(n =>n.Services, new SelectList(Model.Services, "Id", "Title"), new { @class = "form-control", @id= "addservice" })
+                                           @Html.DropDownListFor(n => n.Services, new SelectList(Model.Services, "Id", "Title"), new { @class = "form-control", @id = "addservice" })
                                             <label for="message-text" class="col-form-label">Введіть назву моделі:</label>
                                             <textarea class="form-control" id="message-text"></textarea>
 
@@ -110,7 +110,7 @@
      $('[data-toggle=confirmation]').confirmation({
          rootSelector: '[data-toggle=confirmation]',
         onConfirm: function () {
-            $.post('@Url.Action("DeleteDetail", "Admin")', { id: $(this).attr("id") }, function (data) {
+            $.post('@Url.Action("DeleteServiceDetail", "Admin")', { id: $(this).attr("id") }, function (data) {
                 $(".errmsgs").html("");
                 if (data.Success) {
                     location.reload();

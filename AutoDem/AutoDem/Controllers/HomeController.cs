@@ -14,13 +14,39 @@ namespace AutoDem.Controllers
     public class HomeController : Controller
     {
         GenericUnitOfWork db = new GenericUnitOfWork();
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            //GenericUnitOfWork repository = new GenericUnitOfWork();
+            var model = new IndexHomeViewModel();
+            model.Services = new List<ServiceShowViewModel>();
+            model.LastAutos = new List<IndexHomeLastAutoViewModel>();
 
-            //var result = repository.Repository<ApplicationRole>().GetAll();
+            var allServices = await db.Repository<Service>().GetAllAsync();
+            
+            foreach (var item in allServices)
+            {
+                model.Services.Add(new ServiceShowViewModel()
+                {
+                    Title = item.Title,
+                    Body = item.Body,
+                    Details = new List<string>(item.ServiceDetail.Select(x => x.Name))
+                });
+            }
 
-            return View();
+            var lastAutos = (await db.Repository<Auto>().GetAllAsync()).OrderByDescending(x=> x.DatePublication).Take(6);
+
+            foreach (var item in lastAutos)
+            {
+                model.LastAutos.Add(new IndexHomeLastAutoViewModel()
+                {
+                    PathToPhoto = item.PhotoAutos.FirstOrDefault() == null ? "" : item.PhotoAutos.First().PathToPhoto,
+                    Name = item.Model.Name + " " + item.Type.Name + " " + item.YearOfManufacture,
+                    ShortDescription = (item.Description.Split().Take(15).Aggregate("", (a, b) => a + " " + b)) + "...",
+                    Id = item.Id
+                });
+            }
+
+
+            return View(model);
         }
 
         public async Task<ActionResult> Services()

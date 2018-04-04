@@ -36,40 +36,42 @@
                 {
                     @:<div class="flex-section reverse">
                     }
-                    <div class="col-1">
-                        <div class="text">
-                            <div class="row row-pb-sm">
-                                <div class="col-md-12">
-                                    <h2>@Model[i].Title</h2>
-                                    <p>@Model[i].Body</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <ul class="check-li">
-                                        @for (int j = 0; j < @Model[i].Details.Count / 2; j++)
-                                        {
-                                            <li>@Model[i].Details[j]</li>
-                                        }
-                                    </ul>
-                                </div>
-                                <div class="col-md-6">
-                                    <ul class="check-li">
-                                        @for (int j = @Model[i].Details.Count / 2; j < @Model[i].Details.Count; j++)
-                                        {
-                                            <li>@Model[i].Details[j]</li>
-                                        }
-                                    </ul>
-                                </div>
-                            </div>
+            <div class="col-1">
+                <div class="text">
+                    <div class="row row-pb-sm">
+                        <div class="col-md-12">
+                            <h2>@Model[i].Title</h2>
+                            <p>@Model[i].Body</p>
                         </div>
                     </div>
-                    string url = "/images/img_" + (i + 1) + ".jpg";
-                    @:<div class="col-2 flex-img" style="background-image: url(@url);"></div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="check-li">
+                                @for (int j = 0; j < @Model[i].Details.Count / 2; j++)
+                                {
+                                    <li>@Model[i].Details[j]</li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="check-li">
+                                @for (int j = @Model[i].Details.Count / 2; j < @Model[i].Details.Count; j++)
+                                {
+                                    <li>@Model[i].Details[j]</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            string url = "/images/img_" + (i + 1) + ".jpg";
+            @:<div class="col-2 flex-img" style="background-image: url(@url);"></div>
+            @:</div>
+
                 }
 
 
-    </div>
+   
 </div>
 <div class="col-2 flex-img" style="background-image: url(/images/img_bg_2.jpg);"></div>
 </div>
