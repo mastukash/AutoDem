@@ -41,7 +41,7 @@
                                     <form>
                                         <div class="form-group">
                                             <label for="message-text" class="col-form-label">Виберіть марку:</label>
-                                            @Html.DropDownListFor(n =>n.Services, new SelectList(Model.Services, "Id", "Title"), new { @class = "form-control", @id="addservice" })
+                                            @Html.DropDownListFor(n =>n.Services, new SelectList(Model.Services, "Id", "Title"), new { @class = "form-control", @id= "addservice" })
                                             <label for="message-text" class="col-form-label">Введіть назву моделі:</label>
                                             <textarea class="form-control" id="message-text"></textarea>
 
@@ -93,7 +93,7 @@
 
 <script>
     $("#createDetail").click(function (e) {
-        $.post('@Url.Action("AddDetail", "Admin")', {
+        $.post('@Url.Action("AddServiceDetail", "Admin")', {
             name: $("#message-text").first().val(),
             idService: $("#addservice").find(":selected").val()
         },
