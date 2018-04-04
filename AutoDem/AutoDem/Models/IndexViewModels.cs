@@ -40,5 +40,20 @@ namespace AutoDem.Models
         public List<string> Details { get; set; }
     }
 
+    public class IndexHomeLastAutoViewModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string ShortDescription { get; set; }
+        public string PathToPhoto { get; set; }
+    }
+
+    public class IndexHomeViewModel
+    {
+        public List<ServiceShowViewModel> Services { get; set; }
+
+        public List<IndexHomeLastAutoViewModel> LastAutos { get; set; }
+    }
+
 
 }
