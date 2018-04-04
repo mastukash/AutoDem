@@ -9,7 +9,7 @@
             <h2>Новий автомобіль</h2>
             <div class="panel panel-default">
                 @*<div class="panel-heading"><h6 class="panel-title ">Заповніть характеристики автомобіля</h6></div>*@
-                @using (Html.BeginForm("CreateAuto", "Admin", FormMethod.Post))
+                @using (Html.BeginForm("CreateAuto", "Admin", FormMethod.Post, new {enctype = "multipart/form-data" }))
                 {
                     @Html.AntiForgeryToken()
                     <div>
@@ -100,38 +100,44 @@
                                     <td>@Html.EditorFor(model => model.Transmission)</td>
                                     <td>@Html.ValidationMessageFor(m => m.Transmission, "", new { @class = "text-danger" })</td>
                                 </tr>
-                                <tr>
+                                @*<tr>
                                     <td>@Html.DisplayNameFor(model => model.SoldOut)</td>
                                     <td>@Html.EditorFor(model => model.SoldOut)</td>
                                     <td>@Html.ValidationMessageFor(m => m.SoldOut, "", new { @class = "text-danger" })</td>
-                                </tr>
+                                </tr>*@
                                 <tr>
                                     <td>@Html.DisplayNameFor(model => model.Description)</td>
                                     <td colspan="2">
                                         <!-- WYSIWYG editor inside panel -->
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading"><h6 class="panel-title"><i class="fa fa-pencil"></i> Введіть опис автомобіля</h6></div>
-                                            <div class="panel-body">
-                                                <textarea class="editor" id="Description" name="Description" placeholder="Опис автомобіля..."></textarea>
-                                                <div class="form-actions text-right">
-                                                </div>
-                                            </div>
-                                        </div>
+                                       
+                                                <textarea rows="10" style="width:100%" id="Description" name="Description" placeholder="Опис автомобіля..."></textarea>
+                                              
                                         @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>@Html.DisplayNameFor(model => model.AdditionalOptions)</td>
                                     <td colspan="2">
-
-                                        @foreach (var i in Model.AdditionalOptions)
-                                        {
-                                            <div style="display:inline-block; width:150px; font-size:12pt;">
-                                                <span style="margin:5px 10px;">@Html.CheckBox(@i.Name, @i.Available)</span>
-                                                <span style="margin:5px 10px"> @i.Name</span>
-                                            </div>
-                                        }
+                                        @for (int i = 0; i < Model.AdditionalOptions.Count; i++)
+    {
+                                    <div style="display:inline-block; width:150px; font-size:12pt;">
+                                        @Html.HiddenFor(x => x.AdditionalOptions[i].Name)
+                                        @Html.CheckBoxFor(x => x.AdditionalOptions[i].Checked)
+                                        @Html.LabelFor(x => x.AdditionalOptions[i].Checked, Model.AdditionalOptions[i].Name)
+                                    </div>
+}
                                     </td>
+
+                                        @*<td>@Html.DisplayNameFor(model => model.AdditionalOptions)</td>
+            <td colspan="2">
+
+                @foreach (var i in Model.AdditionalOptions)
+                {
+                    <div style="display:inline-block; width:150px; font-size:12pt;">
+                        <span style="margin:5px 10px;">@Html.CheckBox(i.Name, @i.Available)</span>
+                        <span style="margin:5px 10px"> @i.Name</span>
+                    </div>
+                }
+            </td>*@
                                 </tr>
                             </tbody>
                         </table>
@@ -173,15 +179,30 @@
                     id: "file" + numbPhoto,
                     name: "file",
                     change: handleFileSelect
-                });  
+                });
                 sdiv.append(elementInput);
                 $("#output").append(sdiv);
-               
+
             };
         })(f);
         // Read in the image file as a data URL.
         reader.readAsDataURL(f);
     }
     document.getElementById("file0").addEventListener('change', handleFileSelect, false);
-    
+    $("#Brand").on('change',function (e) {
+            $.post('@Url.Action("CreateAutoChangeBrand", "Admin")', { id: e.target.value },
+                function (data) {
+                    if (data.Success) {
+                        $("#Model option").remove(); // Remove all <option> child tags.
+                        $.each(data.Models, function (index, item) { // Iterates through a collection
+                            $("#Model").append( // Append an object to the inside of the select box
+                                $("<option></option>") // Yes you can do this.
+                                    .text(item.description)
+                                    .val(item.id)
+                            );
+                        });
+                    }
+                });
+        });
+
 </script>

@@ -3,6 +3,7 @@ using AutoDem.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -143,11 +144,11 @@ namespace AutoDem.Controllers
         [Display(Name = "Трансмісія")]
         public string Transmission { get; set; } = "";
         [Display(Name = "Продано")]
-        public bool SoldOut { get; set; } = false;
+        public bool? SoldOut { get; set; } = false;
         [Display(Name = "Опис")]
         public string Description { get; set; } = "";              
         [Display(Name = "Додаткові характеристики")]
-        public List<AdminAutoAdditionalOptionViewModel> AdditionalOptions { get; set; } = new List<AdminAutoAdditionalOptionViewModel>();
+        public IList<VendorAssistanceViewModel> AdditionalOptions { get; set; }
         [Display(Name = "Фотографії автомобіля")]
         public List<PhotoAuto> PhotoAutos { get; set; } = new List<PhotoAuto>();
         [Display(Name = "Дата публікації автомобіля")]
@@ -160,6 +161,19 @@ namespace AutoDem.Controllers
         public string Name { get; set; }
         public bool Available { get; set; }
     }
+    public class AdminAutoAddChckOpt
+    {
+        public string Name { get; set; }
+        public bool Checked { get; set; }
+    }
+    public class VendorAssistanceViewModel
+    {
+        public string Name { get; set; }
+        public bool Checked { get; set; }
+    }
+
+    
+
 
     #endregion
 
@@ -348,19 +362,81 @@ namespace AutoDem.Controllers
             {
                 Brand = brandes.ToList(),
                 Model = mmodel,
+                SoldOut = false,
                 Type = types.Select(x=> new AdminTypeAutoViewModel{Id = x.Id, Name = x.Name }).ToList(),
                 FuelType = fuelTypes.Select(x => new AdminFuelTypeViewModel { Id = x.Id, Name = x.Name }).ToList(),
-                AdditionalOptions = additionalOptions.Select(x => new AdminAutoAdditionalOptionViewModel { Name = x.characteristic, Available = false }).ToList(),
+                //AdditionalOptions = additionalOptions.Select(x => new AdminAutoAdditionalOptionViewModel { Name = x.characteristic, Available = false }).ToList(),
                 Country = countires.Select(x => new AdminCountryViewModel { Id = x.Id, Name = x.Name }).ToList(),
-                PhotoAutos = new List<PhotoAuto>() { new PhotoAuto() { } }
+                PhotoAutos = new List<PhotoAuto>() { new PhotoAuto() { } },              
             };
+            auto.AdditionalOptions = new List<VendorAssistanceViewModel>();
+
+            foreach (var item in additionalOptions)
+            {
+                auto.AdditionalOptions.Add(new VendorAssistanceViewModel() {
+                    Name = item.characteristic
+                });
+            }
+
             return View(auto);
         }
 
         [HttpPost]
-        public ActionResult CreateAuto(AdminAutoViewModel model)
+        public async Task<ActionResult> CreateAuto(HttpPostedFileBase []file, int Brand, int Model, int Country, int Type, 
+            int FuelType, string Color, int Year, double Price, int Mileage, double EngineCapacity,
+            string Drive, string Transmission, string Description, IList<VendorAssistanceViewModel> AdditionalOptions)
         {
+            Auto auto = new Auto();
+            auto.Color = Color;
+            auto.Country = await unitOfWork.Repository<Country>().FindByIdAsync(Convert.ToInt32(Country));
+            auto.DatePublication = DateTime.Now;
+            auto.Description = Description;
+            auto.Drive = Drive;
+            auto.EngineCapacity = EngineCapacity;
+            auto.FuelType = await unitOfWork.Repository<FuelType>().FindByIdAsync(Convert.ToInt32(FuelType));
+            auto.Mileage = Mileage;
+            auto.Model = await unitOfWork.Repository<Model>().FindByIdAsync(Convert.ToInt32(Model));
+            auto.Model.Brand = await unitOfWork.Repository<Brand>().FindByIdAsync(Convert.ToInt32(Brand));
+            auto.Price = Convert.ToDecimal(Price);
+            auto.SoldOut = false;
+            auto.Transmission = Transmission;
+            auto.Type = await unitOfWork.Repository<AutoDem.DAL.TypeAuto>().FindByIdAsync(Convert.ToInt32(Type));
+            auto.YearOfManufacture = Year;
+            await unitOfWork.Repository<AutoDem.DAL.Auto>().AddAsync(auto);
+            await unitOfWork.SaveAsync();
+
+            DirectoryInfo dir = Directory.CreateDirectory(Path.Combine(Server.MapPath("~/Images/Autos/"), 
+                $"{auto.Model.Brand.Name}_{auto.Model.Name}{auto.YearOfManufacture}_{auto.Id}"));
+
+            foreach (var item in file)
+            {
+                if (item == null) continue;
+                auto.PhotoAutos.Add(new PhotoAuto() { PathToPhoto = $"/images/Autos/{dir}/{item.FileName}"});
+                item.SaveAs(Server.MapPath($"~/Images/Autos/{auto.Model.Brand.Name}_{auto.Model.Name}{auto.YearOfManufacture}_{auto.Id}/{item.FileName}"));
+            }
+
+            List<AdditionalOption> addOptions = new List<AdditionalOption>();
+
+            var ooption = await unitOfWork.Repository<AdditionalOption>().GetAllAsync();
+
+            foreach (var item in AdditionalOptions)
+            {
+                AdditionalOption ad = ooption.Where(x => x.characteristic == item.Name && item.Checked).FirstOrDefault();
+                if(ad!= null)
+                addOptions.Add(ad);
+            }
+
+            addOptions.ForEach(x=> auto.AdditionalOptions.Add(x));
+
+            await unitOfWork.SaveAsync();
             return View("Index");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateAutoChangeBrand(int id)
+        {
+            var brand = await unitOfWork.Repository<Brand>().FindByIdAsync(Convert.ToInt32(id));
+            return Json(new { Success = true, Models = from m in brand.Models select new { id = m.Id, description = m.Name}  });
         }
         #endregion
 
