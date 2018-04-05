@@ -325,6 +325,7 @@
     <Content Include="Views\Admin\ServiceList.cshtml" />
     <Content Include="Views\Admin\CreateAuto.cshtml" />
     <Content Include="Views\Admin\ServiceDetailList.cshtml" />
+    <Content Include="Views\Admin\EditAuto.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

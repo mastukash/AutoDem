@@ -1,0 +1,166 @@
+﻿@model AutoDem.Controllers.AdminEditAutoViewModel
+@{
+    ViewBag.Title = "Створення автомобіля";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="page-content">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Новий автомобіль</h2>
+            <div class="panel panel-default">
+                @*<div class="panel-heading"><h6 class="panel-title ">Заповніть характеристики автомобіля</h6></div>*@
+                @using (Html.BeginForm("EditAuto", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @*@Html.AntiForgeryToken()*@
+                <div>
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger", role = "form", enctype = "multipart/form-data" })
+                    <hr />
+                    @Html.HiddenFor(model => model.AutoId)
+                    @Html.HiddenFor(model => model.DatePublication)
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="width:15%">Назва</th>
+                                <th style="width:15%">Характеристики</th>
+                                <th style="width:70%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>@Html.DisplayNameFor(model => model.PathToPhotos)</td>
+                                <td colspan="2">
+                                    <span id="output">
+                                        @foreach (var photo in Model.PathToPhotos)
+                        {
+                            <span class="sdiv" style="border:1px solid black; padding:5px; display:inline-block; margin:5px;">
+                                <img src="@photo" title="@Path.GetFileName(photo)" style="height:200px;" />
+                            </span>
+        }
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>@Html.DisplayNameFor(model => model.Brandes) та @Html.DisplayNameFor(model => model.Models)</td>
+                                <td>
+                                    @Html.DropDownListFor(n => n.Brand, Model.Brandes, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.Brandes, "", new { @class = "text-danger" })
+                                </td>
+                                <td>
+                                    @Html.DropDownListFor(n => n.Model, Model.Models, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.Models, "", new { @class = "text-danger" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>@Html.DisplayNameFor(model => model.Countires)</td>
+                                <td>@Html.DropDownListFor(n => n.Country, Model.Countires, new { @class = "form-control" })</td>
+                                <td>@Html.ValidationMessageFor(m => m.Countires, "", new { @class = "text-danger" })</td>
+                            </tr>
+                            <tr>
+                                <td>@Html.DisplayNameFor(model => model.Types)</td>
+                                <td>@Html.DropDownListFor(n => n.Type, Model.Types, new { @class = "form-control" })</td>
+                                <td>@Html.ValidationMessageFor(m => m.Types, "", new { @class = "text-danger" })</td>
+                            </tr>
+                            <tr>
+                                <td>@Html.DisplayNameFor(model => model.FuelTypes)</td>
+                                <td>@Html.DropDownListFor(n => n.FuelType, Model.FuelTypes, new { @class = "form-control" })</td>
+                                <td>@Html.ValidationMessageFor(m => m.FuelTypes, "", new { @class = "text-danger" })</td>
+                            </tr>
+                            <tr>
+                                <td>@Html.DisplayNameFor(model => model.Color)</td>
+                                <td>@Html.EditorFor(model => model.Color)</td>
+                                <td>@Html.ValidationMessageFor(m => m.Color, "", new { @class = "text-danger" })</td>
+                            </tr>
+                            <tr>
+                                <td>@Html.DisplayNameFor(model => model.YearOfManufacture)</td>
+                                <td>@Html.EditorFor(model => model.YearOfManufacture)</td>
+                                <td>@Html.ValidationMessageFor(m => m.YearOfManufacture, "", new { @class = "text-danger" })</td>
+                            </tr>
+                            <tr>
+                                <td>@Html.DisplayNameFor(model => model.Price)</td>
+                                <td>@Html.EditorFor(model => model.Price)</td>
+                                <td>@Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })</td>
+                            </tr>
+                            <tr>
+                                <td>@Html.DisplayNameFor(model => model.Mileage)</td>
+                                <td>@Html.EditorFor(model => model.Mileage)</td>
+                                <td>@Html.ValidationMessageFor(m => m.Mileage, "", new { @class = "text-danger" })</td>
+                            </tr>
+                            <tr>
+                                <td>@Html.DisplayNameFor(model => model.EngineCapacity)</td>
+                                <td>@Html.EditorFor(model => model.EngineCapacity)</td>
+                                <td>@Html.ValidationMessageFor(m => m.EngineCapacity, "", new { @class = "text-danger" })</td>
+                            </tr>
+                            <tr>
+                                <td>@Html.DisplayNameFor(model => model.Drive)</td>
+                                <td>@Html.EditorFor(model => model.Drive)</td>
+                                <td>@Html.ValidationMessageFor(m => m.Drive, "", new { @class = "text-danger" })</td>
+                            </tr>
+                            <tr>
+                                <td>@Html.DisplayNameFor(model => model.Transmission)</td>
+                                <td>@Html.EditorFor(model => model.Transmission)</td>
+                                <td>@Html.ValidationMessageFor(m => m.Transmission, "", new { @class = "text-danger" })</td>
+                            </tr>
+                            <tr>
+                                <td>@Html.DisplayNameFor(model => model.SoldOut)</td>
+                                <td>@Html.EditorFor(model => model.SoldOut)</td>
+                                <td>@Html.ValidationMessageFor(m => m.SoldOut, "", new { @class = "text-danger" })</td>
+                            </tr>
+                            <tr>
+                                <td>@Html.DisplayNameFor(model => model.Description)</td>
+                                <td colspan="2">
+                                    <!-- WYSIWYG editor inside panel -->
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><h6 class="panel-title"><i class="fa fa-pencil"></i> Опис автомобіля</h6></div>
+                                        <div class="panel-body">
+                                            <textarea class="editor" id="Description" name="Description" placeholder="Опис автомобіля...">@Model.Description    </textarea>
+                                        </div>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>@Html.DisplayNameFor(model => model.AdditionalOptions)</td>
+                                <td colspan="2">
+                                    @for (int i = 0; i < Model.AdditionalOptions.Count; i++)
+                    {
+                        <div style="display:inline-block; width:150px; font-size:12pt;">
+                            @Html.HiddenFor(x => x.AdditionalOptions[i].Name)
+                            @Html.CheckBoxFor(x => x.AdditionalOptions[i].Checked)
+                            @Html.LabelFor(x => x.AdditionalOptions[i].Checked, Model.AdditionalOptions[i].Name)
+                        </div>
+    }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                    <div>
+                        <p><input type="submit" value="Зберегти" class="btn btn-success" /></p>
+                    </div>
+                }
+                <p style="text-align:right">
+                    @Html.ActionLink("Back to List", "AutosList", null, new { @class = "btn btn-warning" });
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+        $("#Brand").on('change',function (e) {
+            $.post('@Url.Action("CreateAutoChangeBrand", "Admin")', { id: e.target.value },
+                function (data) {
+                    if (data.Success) {
+                        $("#Model option").remove(); // Remove all <option> child tags.
+                        $.each(data.Models, function (index, item) { // Iterates through a collection
+                            $("#Model").append( // Append an object to the inside of the select box
+                                $("<option></option>") // Yes you can do this.
+                                    .text(item.description)
+                                    .val(item.id)
+                            );
+                        });
+                    }
+                });
+        });
+
+</script>

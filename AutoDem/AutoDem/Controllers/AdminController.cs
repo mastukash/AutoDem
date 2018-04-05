@@ -172,9 +172,51 @@ namespace AutoDem.Controllers
         public string Name { get; set; }
         public bool Checked { get; set; }
     }
+    public class AdminEditAutoViewModel
+    {
+        public int AutoId { get; set; }
+        [Display(Name = "Колір автомобіля")]
+        public string Color { get; set;}
+        [Display(Name = "Дата публікації автомобіля")]
+        public DateTime DatePublication {get; set;}
+        [AllowHtml]
+        public string Description { get; set;}
+        [Display(Name = "Коробка передач???")]
+        public string Drive { get; set;}
+        [Display(Name = "об'єм двигуна")]
+        public double EngineCapacity { get; set;}
+        [Display(Name = "Пробіг")]
+        public int Mileage { get; set;}
+        [Display(Name = "Ціна")]
+        public decimal Price { get; set;}
+        [Display(Name = "Продано")]
+        public bool SoldOut { get; set;}
+        [Display(Name = "Трансмісія")]
+        public string Transmission { get; set;}
+        [Display(Name = "Рік випуску")]
+        [Range(typeof(int), "1950", "2050", ErrorMessage = "Рік повинен бути в діапазоні від 1950 до 2050")]
+        public int YearOfManufacture { get; set; }
+        [Display(Name = "Марка автомобіля")]
+        public IEnumerable<SelectListItem> Brandes { get; set; }
+        [Display(Name = "Модель автомобіля")]
+        public IEnumerable<SelectListItem> Models { get; set; }
+        [Display(Name = "Тип автомобіля")]
+        public IEnumerable<SelectListItem> Types { get; set; }
+        [Display(Name = "Тип двигуна")]
+        public IEnumerable<SelectListItem> FuelTypes { get; set; }
+        [Display(Name = "Країна виробник")]
+        public IEnumerable<SelectListItem> Countires { get; set; }
+        public string Brand { get; set; }
+        public string Model { get; set; }
+        public string Type { get; set; }
+        public string FuelType { get; set; }
+        public string Country { get; set; }
+        [Display(Name = "Додаткові характеристики")]
+        public List <VendorAssistanceViewModel> AdditionalOptions { get; set; }
+        [Display(Name = "Фотографії автомобіля")]
+        public List<string> PathToPhotos { get; set; }
 
-    
-
+    }
 
     #endregion
 
@@ -349,7 +391,88 @@ namespace AutoDem.Controllers
 
             return View(model);
         }
+        public async Task<ActionResult> EditAuto(int id)
+        {
+            var auto = await unitOfWork.Repository<Auto>().FindByIdAsync(id);
+            var autoBrand = await unitOfWork.Repository<Brand>().FindByIdAsync(auto.Model.Brand.Id);
 
+            var allBrandes = await unitOfWork.Repository<Brand>().GetAllAsync();
+            var allModels = (await unitOfWork.Repository<Brand>().FindByIdAsync(autoBrand.Id)).Models;
+            var allTypes = await unitOfWork.Repository<TypeAuto>().GetAllAsync();
+            var allFuelTypes = await unitOfWork.Repository<FuelType>().GetAllAsync();
+            var allAdditionalOptions = await unitOfWork.Repository<AdditionalOption>().GetAllAsync();
+            var allCountires = await unitOfWork.Repository<Country>().GetAllAsync();
+
+            string dir = Path.Combine(Server.MapPath("~/Images/Autos/"), $"{auto.Model.Brand.Name}_{auto.Model.Name}{auto.YearOfManufacture}_{auto.Id}");
+
+            AdminEditAutoViewModel autoEditViewModel = new AdminEditAutoViewModel() {
+                 AutoId = auto.Id,
+                 Color = auto.Color,
+                 DatePublication = auto.DatePublication,
+                 Description = auto.Description,
+                 Drive = auto.Drive,
+                 EngineCapacity = auto.EngineCapacity,
+                 Mileage = auto.Mileage,
+                 Price = auto.Price,
+                 SoldOut = auto.SoldOut,
+                 Transmission = auto.Transmission,
+                 YearOfManufacture = auto.YearOfManufacture,
+                 Brandes =  new List<SelectListItem>(allBrandes.Select(item => new SelectListItem() { Selected = (item.Id == autoBrand.Id) ? true : false, Text = item.Name, Value = item.Id.ToString() })),
+                 Models =  new List<SelectListItem>(allModels.Select(item => new SelectListItem() { Selected = (item.Id == auto.Model.Id) ? true : false, Text = item.Name, Value = item.Id.ToString() })),
+                 Types =  new List<SelectListItem>(allTypes.Select(item => new SelectListItem() { Selected = (item.Id == auto.Type.Id) ? true : false, Text = item.Name, Value = item.Id.ToString() })),
+                 FuelTypes =  new List<SelectListItem>(allFuelTypes.Select(item => new SelectListItem() { Selected = (item.Id == auto.FuelType.Id) ? true : false, Text = item.Name, Value = item.Id.ToString() })),
+                 Countires =  new List<SelectListItem>(allCountires.Select(item => new SelectListItem() { Selected = (item.Id == auto.Country.Id) ? true : false, Text = item.Name, Value = item.Id.ToString() })),
+                 AdditionalOptions = new List<VendorAssistanceViewModel>(),
+                 PathToPhotos = new List<string>(),
+                 Brand = auto.Model.Brand.Id.ToString(),
+                 Country = auto.Country.Id.ToString(),
+                 FuelType = auto.FuelType.Id.ToString(),
+                 Model = auto.Model.Id.ToString(),
+                 Type = auto.Model.Id.ToString()
+            };
+            foreach (var item in allAdditionalOptions)
+            {
+                autoEditViewModel.AdditionalOptions.Add(new VendorAssistanceViewModel()
+                {
+                    Name = item.characteristic,
+                    Checked = (auto.AdditionalOptions.Contains(item) == true) ? true : false
+                });
+            }
+            if (Directory.Exists(dir))
+            {
+               auto.PhotoAutos.ForEach(x => autoEditViewModel.PathToPhotos.Add(x.PathToPhoto));
+            }
+
+            return View(autoEditViewModel);
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public async Task<ActionResult> EditAuto(AdminEditAutoViewModel autoEditViewModel)
+        {
+            var auto = await unitOfWork.Repository<Auto>().FindByIdAsync(autoEditViewModel.AutoId);
+
+            auto.Color = autoEditViewModel.Color;
+            auto.DatePublication = autoEditViewModel.DatePublication;
+            auto.Description = autoEditViewModel.Description;
+            auto.Drive = autoEditViewModel.Drive;
+            auto.EngineCapacity = autoEditViewModel.EngineCapacity;
+            auto.Mileage = autoEditViewModel.Mileage;
+            auto.Price = autoEditViewModel.Price;
+            auto.SoldOut = autoEditViewModel.SoldOut;
+            auto.Transmission = autoEditViewModel.Transmission;
+            auto.YearOfManufacture = autoEditViewModel.YearOfManufacture;
+            auto.Model = await unitOfWork.Repository<Model>().FindByIdAsync(Convert.ToInt32(autoEditViewModel.Model));
+            auto.Model.Brand = await unitOfWork.Repository<Brand>().FindByIdAsync(Convert.ToInt32(autoEditViewModel.Brand));
+            auto.Type = await unitOfWork.Repository<TypeAuto>().FindByIdAsync(Convert.ToInt32(autoEditViewModel.Type));
+            auto.FuelType = await unitOfWork.Repository<FuelType>().FindByIdAsync(Convert.ToInt32(autoEditViewModel.FuelType));
+            auto.Country = await unitOfWork.Repository<Country>().FindByIdAsync(Convert.ToInt32(autoEditViewModel.Country));
+            auto.AdditionalOptions.Clear();
+            auto.AdditionalOptions = autoEditViewModel.AdditionalOptions.Where(item => item.Checked == true).Select(item => new AdditionalOption() { characteristic = item.Name }).ToList();
+
+            await unitOfWork.SaveAsync();
+            return View("Index");
+        }
         public async Task<ActionResult> CreateAuto()
         {
             var brandes = await unitOfWork.Repository<Brand>().GetAllAsync();
@@ -368,7 +491,8 @@ namespace AutoDem.Controllers
                 FuelType = fuelTypes.Select(x => new AdminFuelTypeViewModel { Id = x.Id, Name = x.Name }).ToList(),
                 //AdditionalOptions = additionalOptions.Select(x => new AdminAutoAdditionalOptionViewModel { Name = x.characteristic, Available = false }).ToList(),
                 Country = countires.Select(x => new AdminCountryViewModel { Id = x.Id, Name = x.Name }).ToList(),
-                PhotoAutos = new List<PhotoAuto>() { new PhotoAuto() { } },              
+                PhotoAutos = new List<PhotoAuto>() { new PhotoAuto() { } },       
+                DatePublication = DateTime.Now
             };
             auto.AdditionalOptions = new List<VendorAssistanceViewModel>();
 
