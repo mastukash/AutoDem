@@ -31,10 +31,10 @@
                             <tr>
                                 <td>@i.IdAuto</td>
                                 <td><a href="@Url.Action("Details","Autos",new { id = i.IdAuto})"><img src="@i.PathToPhoto" width="50" height="50" /></a></td>
-                                <td>@i.Name</td>
+                                <td>@i.Name<span id="@("delerr" + i.IdAuto)" class="errmsgs" style="color:red;"></span></td>
                                 <td><a href="@Url.Action("Details","Autos",new { id = i.IdAuto})" target="_blank"><div class="btn btn-success" id="@("s"+i.IdAuto)">Переглянути</div></a></td>
                                 <td><a href="@Url.Action("EditAuto","Admin",new { id = i.IdAuto})" target="_blank"><div class="btn btn-info" id="@("s"+i.IdAuto)">Редагувати</div></a></td>
-                                <td><input class="btn btn-danger" id="@("d"+i.IdAuto)" type="button" value="Видалити" /></td>
+                                <td><input  class="btn btn-danger" id="@("d"+i.IdAuto)" data-toggle="confirmation" data-placement="left" type="button" value="Видалити" /></td>
                             </tr>
             }
                         </tbody>
@@ -42,10 +42,28 @@
                 </div>
             </div>
             <!-- /default datatable inside panel -->
-
         </div>
-
     </div>
-
-
 </div>
+<script>
+         $('[data-toggle=confirmation]').confirmation({
+         rootSelector: '[data-toggle=confirmation]',
+        onConfirm: function () {
+            $.post('@Url.Action("DeleteAuto", "Admin")', { id: $(this).attr("id") }, function (data) {
+                //$(".errmsgs").html("");
+                if (data.Success) {
+                    location.reload();
+                }
+                else
+                    if (data.errmsg) {
+                        var body = "Помилка видалення."; /*+ data.errmsg + ": "
+                        $.each(data.models, function (index, value) {
+                            body += "<span style='color:green;' >" +value +"</span>" + " | ";
+                        });*/
+                        var delerr = '#delerr' + data.jsid;
+                        $(delerr).html(body);
+                    }
+        });
+        },
+    });
+</script>

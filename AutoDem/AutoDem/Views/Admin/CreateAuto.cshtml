@@ -31,7 +31,7 @@
                                         <span id="output">
                                             @*тут також працює обробник події на клік в файлі Scripts/customjs/jsforphoto.js*@
                                             @*<img src="~/images/Autos/@Html.DisplayFor(model =>model.PhotoAutos[itemPhoto].PathToPhoto)" style="max-height:150px;max-width:150px;" alt="" />*@
-                                            <span class ="sdiv" style="border:1px solid black; padding:5px; display:inline-block; margin:5px;">
+                                            <span class="sdiv" style="border:1px solid black; padding:5px; display:inline-block; margin:5px;">
                                                 <input type="file" id="file0" name="file" />
                                             </span>
                                         </span>
@@ -101,58 +101,46 @@
                                     <td>@Html.ValidationMessageFor(m => m.Transmission, "", new { @class = "text-danger" })</td>
                                 </tr>
                                 @*<tr>
-                                    <td>@Html.DisplayNameFor(model => model.SoldOut)</td>
-                                    <td>@Html.EditorFor(model => model.SoldOut)</td>
-                                    <td>@Html.ValidationMessageFor(m => m.SoldOut, "", new { @class = "text-danger" })</td>
-                                </tr>*@
+            <td>@Html.DisplayNameFor(model => model.SoldOut)</td>
+            <td>@Html.EditorFor(model => model.SoldOut)</td>
+            <td>@Html.ValidationMessageFor(m => m.SoldOut, "", new { @class = "text-danger" })</td>
+        </tr>*@
                                 <tr>
                                     <td>@Html.DisplayNameFor(model => model.Description)</td>
                                     <td colspan="2">
                                         <!-- WYSIWYG editor inside panel -->
-
                                         @*<textarea rows="10" style="width:100%" id="Description" name="Description" placeholder="Опис автомобіля..."></textarea>*@
                                         <div class="panel panel-default">
                                             <div class="panel-heading"><h6 class="panel-title"><i class="fa fa-pencil"></i> Опис автомобіля</h6></div>
                                             <div class="panel-body">
-                                                    <textarea class="editor" id="Description" name="Description" placeholder="Опис автомобіля..."></textarea>
+                                                <textarea class="editor" id="Description" name="Description" placeholder="Опис автомобіля..."></textarea>
                                             </div>
                                         </div>
                                         @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td>@Html.DisplayNameFor(model => model.AdditionalOptions)</td>
                                     <td colspan="2">
                                         @for (int i = 0; i < Model.AdditionalOptions.Count; i++)
-    {
-                                    <div style="display:inline-block; width:150px; font-size:12pt;">
-                                        @Html.HiddenFor(x => x.AdditionalOptions[i].Name)
-                                        @Html.CheckBoxFor(x => x.AdditionalOptions[i].Checked)
-                                        @Html.LabelFor(x => x.AdditionalOptions[i].Checked, Model.AdditionalOptions[i].Name)
-                                    </div>
+        {
+                                <div style="display:inline-block; width:150px; font-size:12pt;">
+                                    @Html.HiddenFor(x => x.AdditionalOptions[i].Name)
+                                    @Html.CheckBoxFor(x => x.AdditionalOptions[i].Checked)
+                                    @Html.LabelFor(x => x.AdditionalOptions[i].Checked, Model.AdditionalOptions[i].Name)
+                                </div>
 }
                                     </td>
-
-                                        @*<td>@Html.DisplayNameFor(model => model.AdditionalOptions)</td>
-            <td colspan="2">
-
-                @foreach (var i in Model.AdditionalOptions)
-                {
-                    <div style="display:inline-block; width:150px; font-size:12pt;">
-                        <span style="margin:5px 10px;">@Html.CheckBox(i.Name, @i.Available)</span>
-                        <span style="margin:5px 10px"> @i.Name</span>
-                    </div>
-                }
-            </td>*@
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <div>
-                        <p><input type="submit" value="OK" class="btn btn-default" /></p>
+                        <p><input type="submit" value="Створити"  class="btn btn-success" /></p>
                     </div>
                 }
-                <p>
-                    @Html.ActionLink("Back to List", "AutosList")
+                <p style="text-align:right">
+                    @Html.ActionLink("Back to List", "AutosList", null, new { @class = "btn btn-warning" });
                 </p>
             </div>
         </div>

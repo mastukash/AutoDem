@@ -1,5 +1,5 @@
 ﻿@model List<AutoDem.Models.AutoIndexViewModel>
-
+@using System.Text.RegularExpressions
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -34,7 +34,7 @@
                         </figure>
                         <div class="gtco-text">
                             <h2>@Model[i].Name</h2>
-                            <p>@Model[i].ShortDescription</p>
+                            <p>@Regex.Replace(Model[i].ShortDescription, "(<(.|\n)*?>|&nbsp;)", string.Empty)</p>
                             <p class="gtco-category"><span>@Model[i].Country</span></p>@*, <span>Branding</span>, <span>Illustrator</span>*@
                         </div>
                     </a>
@@ -63,4 +63,3 @@
 @Scripts.Render("~/bundles/jquery")
 @Scripts.Render("~/bundles/bootstrap")
 @Scripts.Render("~/bundles/index")
- 

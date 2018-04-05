@@ -433,6 +433,29 @@ namespace AutoDem.Controllers
             await unitOfWork.SaveAsync();
             return View("Index");
         }
+        [HttpPost]
+        public async Task<ActionResult> DeleteAuto(string id)
+        {
+
+            var auto = await unitOfWork.Repository<Auto>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
+            //if (auto.Autos.Count > 0)
+            //    return Json(new { Success = false, jsid = id.Remove(0, 1), errmsg = "Видаліть спочатку автомобілі такої характеристики", models = additionalOption.Autos.Select(x => $"{x.Model.Brand.Name} {x.Model.Name} {x.YearOfManufacture}") });
+
+            string imgDir = Path.Combine(Server.MapPath("~/Images/Autos/"),
+              $"{auto.Model.Brand.Name}_{auto.Model.Name}{auto.YearOfManufacture}_{auto.Id}");
+            if (Directory.Exists(imgDir))
+            {
+                Directory.GetFiles(imgDir).ToList().ForEach(x => System.IO.File.Delete(x));
+                Directory.Delete(imgDir);
+            }
+
+            await unitOfWork.Repository<Auto>().RemoveAsync(auto);
+            await unitOfWork.SaveAsync();
+
+           
+            return Json(new { Success = true, jsid = id });
+        }
+
 
         [HttpPost]
         public async Task<ActionResult> CreateAutoChangeBrand(int id)
