@@ -61,7 +61,7 @@
             <p><span class="item_price">$@Model.Price</span> <del>- $@(Model.Price * 1.2m)</del></p>
             <div class="description">
                 <h5>Опис автомобіля</h5>
-                <p>@Model.Description</p>
+                <p>@Html.Raw(Model.Description)</p>
 
             </div>
         </div>

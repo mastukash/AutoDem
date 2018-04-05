@@ -146,6 +146,7 @@ namespace AutoDem.Controllers
         [Display(Name = "Продано")]
         public bool? SoldOut { get; set; } = false;
         [Display(Name = "Опис")]
+        [AllowHtml]
         public string Description { get; set; } = "";              
         [Display(Name = "Додаткові характеристики")]
         public IList<VendorAssistanceViewModel> AdditionalOptions { get; set; }
@@ -382,6 +383,7 @@ namespace AutoDem.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public async Task<ActionResult> CreateAuto(HttpPostedFileBase []file, int Brand, int Model, int Country, int Type, 
             int FuelType, string Color, int Year, double Price, int Mileage, double EngineCapacity,
             string Drive, string Transmission, string Description, IList<VendorAssistanceViewModel> AdditionalOptions)

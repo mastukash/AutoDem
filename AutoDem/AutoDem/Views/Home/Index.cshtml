@@ -1,4 +1,5 @@
 ﻿@model AutoDem.Models.IndexHomeViewModel
+@using System.Text.RegularExpressions
 @{
     ViewBag.Title = "Home Page";
 }
@@ -63,7 +64,7 @@
                                 </figure>
                                 <div class="gtco-text">
                                     <h2>@Model.LastAutos[i].Name</h2>
-                                    <p>@Model.LastAutos[i].ShortDescription</p>
+                                    <p> @Regex.Replace(Model.LastAutos[i].ShortDescription, "(<(.|\n)*?>|&nbsp;)", string.Empty)</p>
                                     <p><span class="btn btn-primary">Детальніше</span></p>
                                 </div>
                             </a>

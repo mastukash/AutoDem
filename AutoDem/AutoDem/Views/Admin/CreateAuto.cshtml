@@ -11,7 +11,7 @@
                 @*<div class="panel-heading"><h6 class="panel-title ">Заповніть характеристики автомобіля</h6></div>*@
                 @using (Html.BeginForm("CreateAuto", "Admin", FormMethod.Post, new {enctype = "multipart/form-data" }))
                 {
-                    @Html.AntiForgeryToken()
+                    @*@Html.AntiForgeryToken()*@
                     <div>
                         @Html.ValidationSummary(true, "", new { @class = "text-danger", role = "form", enctype = "multipart/form-data" })
                         <hr />
@@ -109,9 +109,14 @@
                                     <td>@Html.DisplayNameFor(model => model.Description)</td>
                                     <td colspan="2">
                                         <!-- WYSIWYG editor inside panel -->
-                                       
-                                                <textarea rows="10" style="width:100%" id="Description" name="Description" placeholder="Опис автомобіля..."></textarea>
-                                              
+
+                                        @*<textarea rows="10" style="width:100%" id="Description" name="Description" placeholder="Опис автомобіля..."></textarea>*@
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading"><h6 class="panel-title"><i class="fa fa-pencil"></i> Опис автомобіля</h6></div>
+                                            <div class="panel-body">
+                                                    <textarea class="editor" id="Description" name="Description" placeholder="Опис автомобіля..."></textarea>
+                                            </div>
+                                        </div>
                                         @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
                                     </td>
                                 </tr>
@@ -156,16 +161,30 @@
 <script>
     var numbPhoto = 1;
     function handleFileSelect(evt) {
+        var secondLoad = false;
         var file = evt.target.files; // FileList object
         var f = file[0];
+        //alert(file[0].name);
         // Only process image files.
         if (!f.type.match('image.*')) {
             alert("Image only please....");
+            //return;
         }
+        if (evt.target.nextElementSibling != null && evt.target.nextElementSibling.title != null) {
+            evt.target.nextElementSibling.title = file[0].name;
+            secondLoad = true;
+            //return;
+        }
+        
         var reader = new FileReader();
         // Closure to capture the file information.
         reader.onload = (function (theFile) {
             return function (e) {
+                if (secondLoad == true) {
+                    evt.target.nextElementSibling.src = e.target.result;
+                    return;
+                }
+                secondLoad = false;
                 var lastDiv = $(".sdiv").last();
                 lastDiv.append(['<img class="thumb" style="max-height:150px;max-width:150px;" title="', escape(theFile.name), '" src="', e.target.result, '" />']
                     .join(''));
@@ -176,7 +195,7 @@
                 });
                 var elementInput = $('<input/>', {
                     type: "file",
-                    id: "file" + numbPhoto,
+                    id: "file" + numbPhoto++,
                     name: "file",
                     change: handleFileSelect
                 });
