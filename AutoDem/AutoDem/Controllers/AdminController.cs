@@ -384,7 +384,7 @@ namespace AutoDem.Controllers
                 {
                     IdAuto = auto.Id,
                     Name = $"{auto.Model.Brand.Name} {auto.Model.Name} {auto.YearOfManufacture}",
-                    PathToPhoto = auto.PhotoAutos[0].PathToPhoto
+                    PathToPhoto = auto.PhotoAutos.Count > 0 ? auto.PhotoAutos[0].PathToPhoto : "/images/Autos/empty.jpg"
                 };
                 model.Add(tmp);
             }
@@ -417,7 +417,7 @@ namespace AutoDem.Controllers
             var allCountires = await unitOfWork.Repository<Country>().GetAllAsync();
 
             //шлях до фотографії береться з БД -> з першої фотки автомобіля
-            string dir = Path.Combine(Server.MapPath(Path.GetDirectoryName(auto.PhotoAutos[0].PathToPhoto)));
+            string dir = auto.PhotoAutos.Count>0? Path.Combine(Server.MapPath(Path.GetDirectoryName(auto.PhotoAutos[0].PathToPhoto))):null;
 
             AdminEditAutoViewModel autoEditViewModel = new AdminEditAutoViewModel() {
                  AutoId = auto.Id,
@@ -465,6 +465,7 @@ namespace AutoDem.Controllers
         public async Task<ActionResult> EditAuto(AdminEditAutoViewModel autoEditViewModel)
         {
             var auto = await unitOfWork.Repository<Auto>().FindByIdAsync(autoEditViewModel.AutoId);
+            var allAddOptions = await unitOfWork.Repository<AdditionalOption>().GetAllAsync(); ;
 
             auto.Color = autoEditViewModel.Color;
             auto.DatePublication = autoEditViewModel.DatePublication;
@@ -482,7 +483,12 @@ namespace AutoDem.Controllers
             auto.FuelType = await unitOfWork.Repository<FuelType>().FindByIdAsync(Convert.ToInt32(autoEditViewModel.FuelType));
             auto.Country = await unitOfWork.Repository<Country>().FindByIdAsync(Convert.ToInt32(autoEditViewModel.Country));
             auto.AdditionalOptions.Clear();
-            auto.AdditionalOptions = autoEditViewModel.AdditionalOptions.Where(item => item.Checked == true).Select(item => new AdditionalOption() { characteristic = item.Name }).ToList();
+            foreach (var item in autoEditViewModel.AdditionalOptions)
+            {
+                var buf = allAddOptions.Where(x => x.characteristic == item.Name && item.Checked == true).FirstOrDefault();
+                if(buf!=null)
+                    auto.AdditionalOptions.Add(buf);
+            }
 
             await unitOfWork.SaveAsync();
             return View("Index");
