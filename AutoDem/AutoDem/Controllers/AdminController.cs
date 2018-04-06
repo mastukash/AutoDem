@@ -181,9 +181,9 @@ namespace AutoDem.Controllers
         public DateTime DatePublication {get; set;}
         [AllowHtml]
         public string Description { get; set;}
-        [Display(Name = "Коробка передач???")]
+        [Display(Name = "Коробка передач")]
         public string Drive { get; set;}
-        [Display(Name = "об'єм двигуна")]
+        [Display(Name = "Об'єм двигуна")]
         public double EngineCapacity { get; set;}
         [Display(Name = "Пробіг")]
         public int Mileage { get; set;}
@@ -391,6 +391,19 @@ namespace AutoDem.Controllers
 
             return View(model);
         }
+        public async Task<ActionResult> DeleteAutoImage(string name, int idAuto)
+        {
+            var auto = await unitOfWork.Repository<Auto>().FindByIdAsync(Convert.ToInt32(idAuto));
+            var photo  = auto.PhotoAutos.Where(x=>x.PathToPhoto.Contains(name)).First();
+            if(System.IO.File.Exists(Server.MapPath(photo.PathToPhoto)))
+            {
+                System.IO.File.Delete(Server.MapPath(photo.PathToPhoto));
+            }
+            auto.PhotoAutos.Remove(photo);
+
+            await unitOfWork.SaveAsync();
+            return Json(new { Success = true });
+        }
         public async Task<ActionResult> EditAuto(int id)
         {
             var auto = await unitOfWork.Repository<Auto>().FindByIdAsync(id);
@@ -403,7 +416,8 @@ namespace AutoDem.Controllers
             var allAdditionalOptions = await unitOfWork.Repository<AdditionalOption>().GetAllAsync();
             var allCountires = await unitOfWork.Repository<Country>().GetAllAsync();
 
-            string dir = Path.Combine(Server.MapPath("~/Images/Autos/"), $"{auto.Model.Brand.Name}_{auto.Model.Name}{auto.YearOfManufacture}_{auto.Id}");
+            //шлях до фотографії береться з БД -> з першої фотки автомобіля
+            string dir = Path.Combine(Server.MapPath(Path.GetDirectoryName(auto.PhotoAutos[0].PathToPhoto)));
 
             AdminEditAutoViewModel autoEditViewModel = new AdminEditAutoViewModel() {
                  AutoId = auto.Id,
@@ -579,8 +593,6 @@ namespace AutoDem.Controllers
            
             return Json(new { Success = true, jsid = id });
         }
-
-
         [HttpPost]
         public async Task<ActionResult> CreateAutoChangeBrand(int id)
         {

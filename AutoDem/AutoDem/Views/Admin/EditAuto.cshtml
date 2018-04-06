@@ -3,6 +3,17 @@
     ViewBag.Title = "Створення автомобіля";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
+<script>
+    function delPhoto(elem)
+    {
+        $.post('@Url.Action("DeleteAutoImage", "Admin")', { name: elem.parentNode.parentNode.firstChild.nextSibling.title, idAuto: @Model.AutoId },
+                function (data) {
+                    if (data.Success) {
+                        elem.parentNode.parentNode.remove(); // Remove all <option> child tags.
+                    }
+                });
+    }
+    </script>
 <div class="page-content">
     <div class="row">
         <div class="col-md-12">
@@ -30,12 +41,22 @@
                                 <td>@Html.DisplayNameFor(model => model.PathToPhotos)</td>
                                 <td colspan="2">
                                     <span id="output">
-                                        @foreach (var photo in Model.PathToPhotos)
-                        {
-                            <span class="sdiv" style="border:1px solid black; padding:5px; display:inline-block; margin:5px;">
-                                <img src="@photo" title="@Path.GetFileName(photo)" style="height:200px;" />
-                            </span>
-        }
+                                        @{
+                                            int pos = 0;
+                                            string idPhoto = "photo";
+
+                                            foreach (var photo in Model.PathToPhotos)
+                                            {
+                                        <span class="sdiv" style="border:1px solid black; padding:5px; display:inline-block; margin:5px;">
+                                            <img src="@photo" id="@(idPhoto+pos++)" title="@Path.GetFileName(photo)" style="height:200px;" />
+                                            <span style="display:block; border-top: 1px solid gray; text-align:center;">
+                                                <input type="button" class="btn btn-primary" style="margin:5px" value="Змінити" />
+                                                <input type="button" class="btn btn-danger" style="margin:5px" value="Видалити" onclick="delPhoto(this)" />
+                                            </span>
+
+                                        </span>
+                                            }
+                                        }
                                     </span>
                                 </td>
                             </tr>
