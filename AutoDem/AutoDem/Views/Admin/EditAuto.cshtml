@@ -57,6 +57,13 @@
                                         </span>
                                             }
                                         }
+                                        <span id="output">
+                                            @*тут також працює обробник події на клік в файлі Scripts/customjs/jsforphoto.js*@
+                                            @*<img src="~/images/Autos/@Html.DisplayFor(model =>model.PhotoAutos[itemPhoto].PathToPhoto)" style="max-height:150px;max-width:150px;" alt="" />*@
+                                            <span class="sdiv" style="border:1px solid black; padding:5px; display:inline-block; margin:5px;">
+                                                <input type="file" id="file0" name="file" />
+                                            </span>
+                                        </span>
                                     </span>
                                 </td>
                             </tr>
@@ -183,5 +190,87 @@
                     }
                 });
         });
+
+
+    var numbPhoto = 1;
+    function handleFileSelect(evt) {
+
+
+        //var formData = new FormData();
+        //var totalFiles = document.getElementById("file0")
+
+
+
+
+
+
+
+
+
+        var secondLoad = false;
+        var file = evt.target.files; // FileList object
+        var f = file[0];
+        
+      //  alert(file[0].name);
+        // Only process image files.
+        //if (!f.type.match('image.*')) {
+        //    alert("Image only please....");
+        //    return;
+        //} 
+        var oldName ;
+        var newName = file[0].name;
+        if (evt.target.nextElementSibling != null && evt.target.nextElementSibling.title != null) {
+            oldName =  evt.target.nextElementSibling.title;
+            evt.target.nextElementSibling.title = file[0].name;
+            secondLoad = true;
+            //return;
+        }
+       
+        var reader = new FileReader();
+        // Closure to capture the file information.
+        reader.onload = (function (theFile) {
+            return function (e) {
+                if (!theFile.type.match('image.*')) {
+                    alert("Image only please....");
+                    return;
+                }
+
+                $.post('@Url.Action("AdminEditAutoChangePhotoPost", "Admin")',
+                    { file : theFile, oldImgName : oldName , newImgName : newName  });
+
+
+                if (secondLoad == true) {
+                    evt.target.nextElementSibling.src = e.target.result;
+                    return;
+                }
+                secondLoad = false;
+                var lastDiv = $(".sdiv").last();
+                lastDiv.append(['<img class="thumb" style="max-height:150px;max-width:150px;" title="', escape(theFile.name), '" src="', e.target.result, '" />']
+                    .join(''));
+                $("#output").append(lastDiv);
+                var sdiv = $('<span />', {
+                    class:"sdiv",
+                    style: "border: 1px solid black; padding: 5px; display: inline-block; margin:5px;"
+                });
+                var elementInput = $('<input/>', {
+                    type: "file",
+                    id: "file" + numbPhoto++,
+                    name: "file",
+                    change: handleFileSelect
+                });
+                sdiv.append(elementInput);
+                $("#output").append(sdiv);
+
+            };
+        })(f);
+        // Read in the image file as a data URL.
+        reader.readAsDataURL(f);
+    }
+    document.getElementById("file0").addEventListener('change', handleFileSelect, false);
+
+
+
+
+
 
 </script>

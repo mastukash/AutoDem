@@ -557,8 +557,9 @@ namespace AutoDem.Controllers
             foreach (var item in file)
             {
                 if (item == null) continue;
-                auto.PhotoAutos.Add(new PhotoAuto() { PathToPhoto = $"/images/Autos/{dir}/{item.FileName}"});
-                item.SaveAs(Server.MapPath($"~/Images/Autos/{auto.Model.Brand.Name}_{auto.Model.Name}{auto.YearOfManufacture}_{auto.Id}/{item.FileName}"));
+                string randomName = Path.GetRandomFileName();
+                auto.PhotoAutos.Add(new PhotoAuto() { PathToPhoto = $"/images/Autos/{dir}/{randomName}_{item.FileName}"});
+                item.SaveAs(Server.MapPath($"~/Images/Autos/{auto.Model.Brand.Name}_{auto.Model.Name}{auto.YearOfManufacture}_{auto.Id}/{randomName}_{item.FileName}"));
             }
 
             List<AdditionalOption> addOptions = new List<AdditionalOption>();
@@ -577,6 +578,19 @@ namespace AutoDem.Controllers
             await unitOfWork.SaveAsync();
             return View("Index");
         }
+
+
+        [HttpPost]
+        public ActionResult AdminEditAutoChangePhotoPost(HttpPostedFileBase file , string oldImgName , string newImgName)
+        {
+
+
+            return new JsonResult();
+        }
+
+
+
+
         [HttpPost]
         public async Task<ActionResult> DeleteAuto(string id)
         {
