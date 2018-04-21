@@ -394,8 +394,10 @@ namespace AutoDem.Controllers
         public async Task<ActionResult> DeleteAutoImage(string name, int idAuto)
         {
             var auto = await unitOfWork.Repository<Auto>().FindByIdAsync(Convert.ToInt32(idAuto));
-            var photo  = auto.PhotoAutos.Where(x=>x.PathToPhoto.Contains(name)).First();
-            if(System.IO.File.Exists(Server.MapPath(photo.PathToPhoto)))
+            var photo  = auto.PhotoAutos.Where(x=>x.PathToPhoto.Contains(name)).FirstOrDefault();
+            if(photo==null)
+                return Json(new { Success = false });
+            if (System.IO.File.Exists(Server.MapPath(photo.PathToPhoto)))
             {
                 System.IO.File.Delete(Server.MapPath(photo.PathToPhoto));
             }
@@ -407,6 +409,14 @@ namespace AutoDem.Controllers
         public async Task<ActionResult> EditAuto(int id)
         {
             var auto = await unitOfWork.Repository<Auto>().FindByIdAsync(id);
+            //якщо є якісь фотографії не привязані до автомобіля то видалимо їх
+            var allPhotos = (await unitOfWork.Repository<PhotoAuto>().GetAllAsync()).Where(x => x.Auto == null).ToList();
+            if (allPhotos.Count > 1)
+            {
+                allPhotos.ForEach(x => unitOfWork.Repository<PhotoAuto>().RemoveAsync(x));
+                await unitOfWork.SaveAsync();
+            }
+
             var autoBrand = await unitOfWork.Repository<Brand>().FindByIdAsync(auto.Model.Brand.Id);
 
             var allBrandes = await unitOfWork.Repository<Brand>().GetAllAsync();
@@ -459,13 +469,50 @@ namespace AutoDem.Controllers
 
             return View(autoEditViewModel);
         }
-
+        /// <summary>
+        /// Дозволяє редагувати автомобіль
+        /// </summary>
+        /// <param name="file">тут передається колекція фотографій автомобіля.</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateInput(false)]
-        public async Task<ActionResult> EditAuto(AdminEditAutoViewModel autoEditViewModel)
+        public async Task<ActionResult> EditAuto(HttpPostedFileBase[] file, AdminEditAutoViewModel autoEditViewModel )
         {
             var auto = await unitOfWork.Repository<Auto>().FindByIdAsync(autoEditViewModel.AutoId);
-            var allAddOptions = await unitOfWork.Repository<AdditionalOption>().GetAllAsync(); ;
+            var allAddOptions = await unitOfWork.Repository<AdditionalOption>().GetAllAsync();
+            //---Begin робота із фотографіями
+            string randomName = "";
+            DirectoryInfo dir = Directory.CreateDirectory(Path.Combine(Server.MapPath("~/Images/Autos/"),
+                $"{auto.Model?.Brand?.Name}_{auto.Model?.Name}{auto.YearOfManufacture}_{auto.Id}"));
+            bool b = false;
+            for(int i=0;i<file.Length;i++)
+            {
+                //видалення фотографії - це окремий пост запит до сервера із в'ю
+                if (file[i] == null)
+                    continue;
+                //якщо це змінена фотографія
+                if (file[i] != null&& autoEditViewModel.PathToPhotos != null && autoEditViewModel.PathToPhotos.Count>i)
+                {
+                    b = true;
+                    var autoPhoto = auto.PhotoAutos.Where(x => x.PathToPhoto.Contains(autoEditViewModel.PathToPhotos[i])).First();
+                    if (System.IO.File.Exists(Server.MapPath(autoPhoto.PathToPhoto)))
+                    {
+                        System.IO.File.Delete(Server.MapPath(autoPhoto.PathToPhoto));
+                    }
+                    randomName = Path.GetRandomFileName();
+                    file[i].SaveAs(Server.MapPath($"~/Images/Autos/{auto.Model.Brand.Name}_{auto.Model.Name}{auto.YearOfManufacture}_{auto.Id}/{randomName}_{file[i].FileName}"));
+                    autoPhoto.PathToPhoto = $"/images/Autos/{auto.Model.Brand.Name}_{auto.Model.Name}{auto.YearOfManufacture}_{auto.Id}/{randomName}_{file[i].FileName}";
+                    continue;
+                }
+                b = true;
+                //Якщо це нова фотографія є файл/немає інпута прихованого із таким іменем.
+                //То добавляємо його в newAutos і записуємо його в папку
+                randomName = Path.GetRandomFileName();
+                auto.PhotoAutos.Add(new PhotoAuto() { PathToPhoto = $"/images/Autos/{dir}/{randomName}_{file[i].FileName}" });
+                file[i].SaveAs(Server.MapPath($"~/Images/Autos/{auto.Model.Brand.Name}_{auto.Model.Name}{auto.YearOfManufacture}_{auto.Id}/{randomName}_{file[i].FileName}"));
+            }
+            if(b) await unitOfWork.SaveAsync();
+            //---End робота із фотографіями
 
             auto.Color = autoEditViewModel.Color;
             auto.DatePublication = autoEditViewModel.DatePublication;
@@ -477,8 +524,28 @@ namespace AutoDem.Controllers
             auto.SoldOut = autoEditViewModel.SoldOut;
             auto.Transmission = autoEditViewModel.Transmission;
             auto.YearOfManufacture = autoEditViewModel.YearOfManufacture;
-            auto.Model = await unitOfWork.Repository<Model>().FindByIdAsync(Convert.ToInt32(autoEditViewModel.Model));
-            auto.Model.Brand = await unitOfWork.Repository<Brand>().FindByIdAsync(Convert.ToInt32(autoEditViewModel.Brand));
+
+            var aModel = await unitOfWork.Repository<Model>().FindByIdAsync(Convert.ToInt32(autoEditViewModel.Model));
+            var aBrand = await unitOfWork.Repository<Brand>().FindByIdAsync(Convert.ToInt32(autoEditViewModel.Brand));
+            //якщо змінили модель або бренд або рік то будемо міняти назву папки для картинок і інормацію по картинках в БД
+            if (auto.Model.Name != aModel.Name || auto.Model.Brand.Name != aBrand.Name || auto.YearOfManufacture != autoEditViewModel.YearOfManufacture)
+            {
+                var oldFolderName = $"{auto.Model.Brand.Name}_{auto.Model.Name}{auto.YearOfManufacture}_{auto.Id}";
+                var newFolderName = $"{aBrand.Name}_{aModel.Name}{autoEditViewModel.YearOfManufacture}_{auto.Id}";
+                if (System.IO.Directory.Exists(Server.MapPath($"~/Images/Autos/{oldFolderName}")))
+                {
+                    System.IO.Directory.Move(Server.MapPath($"~/Images/Autos/{oldFolderName}"), Server.MapPath($"~/Images/Autos/{newFolderName}"));
+
+                    var autoPhotos = auto.PhotoAutos;
+                    foreach(var item in autoPhotos)
+                    {
+                        var pName = Path.GetFileName(item.PathToPhoto);
+                        item.PathToPhoto = $"/images/Autos/{newFolderName}/{pName}";
+                    }
+                }
+                auto.Model = aModel;
+                auto.Model.Brand = aBrand;
+            }
             auto.Type = await unitOfWork.Repository<TypeAuto>().FindByIdAsync(Convert.ToInt32(autoEditViewModel.Type));
             auto.FuelType = await unitOfWork.Repository<FuelType>().FindByIdAsync(Convert.ToInt32(autoEditViewModel.FuelType));
             auto.Country = await unitOfWork.Repository<Country>().FindByIdAsync(Convert.ToInt32(autoEditViewModel.Country));
@@ -578,18 +645,6 @@ namespace AutoDem.Controllers
             await unitOfWork.SaveAsync();
             return View("Index");
         }
-
-
-        [HttpPost]
-        public ActionResult AdminEditAutoChangePhotoPost(HttpPostedFileBase file , string oldImgName , string newImgName)
-        {
-
-
-            return new JsonResult();
-        }
-
-
-
 
         [HttpPost]
         public async Task<ActionResult> DeleteAuto(string id)

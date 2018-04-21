@@ -6,23 +6,22 @@
 <script>
     function delPhoto(elem)
     {
-        $.post('@Url.Action("DeleteAutoImage", "Admin")', { name: elem.parentNode.parentNode.firstChild.nextSibling.title, idAuto: @Model.AutoId },
-                function (data) {
-                    if (data.Success) {
-                        elem.parentNode.parentNode.remove(); // Remove all <option> child tags.
-                    }
-                });
+        $.post('@Url.Action("DeleteAutoImage", "Admin")', { name: elem.parentNode.parentNode.firstChild.nextSibling.nextSibling.nextSibling.title, idAuto: @Model.AutoId },
+            function (data) {
+                elem.parentNode.parentNode.remove(); // Remove all <option> child tags.
+            });
     }
     </script>
 <div class="page-content">
     <div class="row">
         <div class="col-md-12">
-            <h2>Новий автомобіль</h2>
+            <h2>Редагування автомобіля</h2>
             <div class="panel panel-default">
                 @*<div class="panel-heading"><h6 class="panel-title ">Заповніть характеристики автомобіля</h6></div>*@
-                @using (Html.BeginForm("EditAuto", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+ 
+                @using (Html.BeginForm("EditAuto", "Admin", FormMethod.Post,new { enctype = "multipart/form-data" }))
                 {
-                    @*@Html.AntiForgeryToken()*@
+            @*@Html.AntiForgeryToken()*@
                 <div>
                     @Html.ValidationSummary(true, "", new { @class = "text-danger", role = "form", enctype = "multipart/form-data" })
                     <hr />
@@ -42,29 +41,30 @@
                                 <td colspan="2">
                                     <span id="output">
                                         @{
-                                            int pos = 0;
-                                            string idPhoto = "photo";
+                            int pos = 0;
+                            string idPhoto = "photo";
 
-                                            foreach (var photo in Model.PathToPhotos)
-                                            {
-                                        <span class="sdiv" style="border:1px solid black; padding:5px; display:inline-block; margin:5px;">
-                                            <img src="@photo" id="@(idPhoto+pos++)" title="@Path.GetFileName(photo)" style="height:200px;" />
-                                            <span style="display:block; border-top: 1px solid gray; text-align:center;">
-                                                <input type="button" class="btn btn-primary" style="margin:5px" value="Змінити" />
-                                                <input type="button" class="btn btn-danger" style="margin:5px" value="Видалити" onclick="delPhoto(this)" />
-                                            </span>
+                            foreach (var photo in Model.PathToPhotos)
+                            {
+                                <span class="sdiv" style="border:1px solid black; padding:5px; display:inline-block; margin:5px;">
+                                    <input type="file" style="margin:5px" id="imageUploadForm" name="file" />
+                                    <img src="@photo" id="@(idPhoto + pos++)" title="@Path.GetFileName(photo)" style="height:200px;" />
+                                    <span style="display:block; border-top: 1px solid gray; text-align:center;">
+                                        <input type="button" class="btn btn-danger" style="margin:5px" value="Видалити" onclick="delPhoto(this)" />
+                                        <input type="hidden" name="PathToPhotos" value="@photo">
+                                    </span>
 
-                                        </span>
-                                            }
+                                </span>
+            }
                                         }
-                                        <span id="output">
-                                            @*тут також працює обробник події на клік в файлі Scripts/customjs/jsforphoto.js*@
-                                            @*<img src="~/images/Autos/@Html.DisplayFor(model =>model.PhotoAutos[itemPhoto].PathToPhoto)" style="max-height:150px;max-width:150px;" alt="" />*@
-                                            <span class="sdiv" style="border:1px solid black; padding:5px; display:inline-block; margin:5px;">
-                                                <input type="file" id="file0" name="file" />
-                                            </span>
+
+                                        @*тут також працює обробник події на клік в файлі Scripts/customjs/jsforphoto.js*@
+                                        @*<img src="~/images/Autos/@Html.DisplayFor(model =>model.PhotoAutos[itemPhoto].PathToPhoto)" style="max-height:150px;max-width:150px;" alt="" />*@
+                                        <span class="sdiv" style="border:1px solid black; padding:5px; display:inline-block; margin:5px;">
+                                            <input type="file" id="file0" name="file" />
                                         </span>
                                     </span>
+                                    @*<input type="submit" class="btn btn-danger" style="margin:5px" value="Зберегти" />*@
                                 </td>
                             </tr>
 
@@ -163,10 +163,10 @@
                         </tbody>
                     </table>
                 </div>
-                    <div>
-                        <p><input type="submit" value="Зберегти" class="btn btn-success" /></p>
-                    </div>
-                }
+            <div>
+                <p><input type="submit" value="Зберегти" class="btn btn-success" /></p>
+            </div>
+}
                 <p style="text-align:right">
                     @Html.ActionLink("Back to List", "AutosList", null, new { @class = "btn btn-warning" });
                 </p>
@@ -191,41 +191,22 @@
                 });
         });
 
-
     var numbPhoto = 1;
     function handleFileSelect(evt) {
-
-
-        //var formData = new FormData();
-        //var totalFiles = document.getElementById("file0")
-
-
-
-
-
-
-
-
-
         var secondLoad = false;
         var file = evt.target.files; // FileList object
         var f = file[0];
-        
-      //  alert(file[0].name);
-        // Only process image files.
-        //if (!f.type.match('image.*')) {
-        //    alert("Image only please....");
-        //    return;
-        //} 
+        if (!f.type.match('image.*')) {
+            alert("Це не зображення....");
+            return;
+        }
         var oldName ;
         var newName = file[0].name;
         if (evt.target.nextElementSibling != null && evt.target.nextElementSibling.title != null) {
             oldName =  evt.target.nextElementSibling.title;
             evt.target.nextElementSibling.title = file[0].name;
             secondLoad = true;
-            //return;
         }
-       
         var reader = new FileReader();
         // Closure to capture the file information.
         reader.onload = (function (theFile) {
@@ -234,20 +215,30 @@
                     alert("Image only please....");
                     return;
                 }
-
-                $.post('@Url.Action("AdminEditAutoChangePhotoPost", "Admin")',
-                    { file : theFile, oldImgName : oldName , newImgName : newName  });
-
-
                 if (secondLoad == true) {
                     evt.target.nextElementSibling.src = e.target.result;
+                    @*$.post('@Url.Action("AdminEditAutoChangePhotoPost", "Admin")',
+                    { file : theFile, oldImgName : oldName , newImgName : newName  });*@
                     return;
                 }
                 secondLoad = false;
+
                 var lastDiv = $(".sdiv").last();
-                lastDiv.append(['<img class="thumb" style="max-height:150px;max-width:150px;" title="', escape(theFile.name), '" src="', e.target.result, '" />']
+                lastDiv.append(['<img class="thumb" style="height:200px;" title="', escape(theFile.name), '" src="', e.target.result, '" />']
                     .join(''));
                 $("#output").append(lastDiv);
+                var elementInsDiv = $('<span/>', {
+                    style: "display:block; border-top: 1px solid gray; text-align:center;"
+                });
+                var elementInputDel = $('<input/>', {
+                    type: "button",
+                    class: "btn btn-danger",
+                    style: "margin:5px",
+                    value: "Видалити",
+                    onclick: "delPhoto(this)"
+                });
+                lastDiv.append(elementInsDiv);
+
                 var sdiv = $('<span />', {
                     class:"sdiv",
                     style: "border: 1px solid black; padding: 5px; display: inline-block; margin:5px;"
@@ -256,21 +247,19 @@
                     type: "file",
                     id: "file" + numbPhoto++,
                     name: "file",
+                   
                     change: handleFileSelect
                 });
+                elementInsDiv.append(elementInputDel);
                 sdiv.append(elementInput);
                 $("#output").append(sdiv);
-
             };
         })(f);
-        // Read in the image file as a data URL.
         reader.readAsDataURL(f);
     }
-    document.getElementById("file0").addEventListener('change', handleFileSelect, false);
 
-
-
-
-
-
+    var elements = document.querySelectorAll("input[type=file]");
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].addEventListener('change', handleFileSelect, false);
+    }
 </script>

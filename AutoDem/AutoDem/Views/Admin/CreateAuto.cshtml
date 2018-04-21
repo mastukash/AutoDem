@@ -147,6 +147,9 @@
     </div>
 </div>
 <script>
+    function delPhoto(elem) {
+        elem.parentNode.remove(); 
+    }
     var numbPhoto = 1;
     function handleFileSelect(evt) {
         var secondLoad = false;
@@ -176,6 +179,15 @@
                 var lastDiv = $(".sdiv").last();
                 lastDiv.append(['<img class="thumb" style="max-height:150px;max-width:150px;" title="', escape(theFile.name), '" src="', e.target.result, '" />']
                     .join(''));
+                lastDiv.append(['<hr>']);
+                var elementInputDel = $('<input/>', {
+                    type: "button",
+                    class: "btn btn-danger",
+                    style: "margin:5px",
+                    value: "Видалити",
+                    onclick: "delPhoto(this)"
+                });
+                lastDiv.append(elementInputDel);
                 $("#output").append(lastDiv);
                 var sdiv = $('<span />', {
                     class:"sdiv",
