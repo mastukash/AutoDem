@@ -220,6 +220,7 @@ namespace AutoDem.Controllers
 
     #endregion
 
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         GenericUnitOfWork unitOfWork = new GenericUnitOfWork();
