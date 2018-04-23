@@ -32,7 +32,7 @@ namespace AutoDem.Controllers
                 });
             }
 
-            var lastAutos = (await db.Repository<Auto>().GetAllAsync()).OrderByDescending(x=> x.DatePublication).Take(6);
+            var lastAutos = (await db.Repository<Auto>().GetAllAsync())?.OrderByDescending(x=> x.DatePublication)?.Take(6);
 
             foreach (var item in lastAutos)
             {

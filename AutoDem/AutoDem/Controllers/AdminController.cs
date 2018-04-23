@@ -241,7 +241,7 @@ namespace AutoDem.Controllers
             var services = await unitOfWork.Repository<Service>().GetAllAsync();
             var details = await unitOfWork.Repository<ServiceDetail>().GetAllAsync();
 
-            model.Services = services.Select(x => x).ToList();
+            model.Services = services?.Select(x => x).ToList();
 
 
             foreach (var m in details)
@@ -249,7 +249,7 @@ namespace AutoDem.Controllers
                 model.Details.Add(new AdminServiceDetailViewModel()
                 {
                     idDetail = m.Id,
-                    idService = m.Service.Id,
+                    idService = m.Service != null ? m.Service.Id : 0,
                     Name = m.Name
                 });
             }
@@ -263,11 +263,18 @@ namespace AutoDem.Controllers
             var serivceDetail = (await unitOfWork.Repository<ServiceDetail>().GetAllAsync()).Where(x => x.Name == name).FirstOrDefault();
             if (serivceDetail != null)
                 return Json(new { Success = false, error = "Така опція уже зареєстрована у базі!" });
-            serivceDetail = new ServiceDetail()
+            try
             {
-                Name = name,
-                Service = await unitOfWork.Repository<Service>().FindByIdAsync(Convert.ToInt32(idService))
-            };
+                serivceDetail = new ServiceDetail()
+                {
+                    Name = name,
+                    Service = await unitOfWork.Repository<Service>().FindByIdAsync(Convert.ToInt32(idService))
+                };
+            }
+            catch
+            {
+                return Json(new { Success = false });
+            }
             await unitOfWork.Repository<ServiceDetail>().AddAsync(serivceDetail);
             await unitOfWork.SaveAsync();
 
@@ -276,11 +283,22 @@ namespace AutoDem.Controllers
         [HttpPost]
         public async Task<ActionResult> DeleteServiceDetail(string id)
         {
-            var serviceDetail = await unitOfWork.Repository<ServiceDetail>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
+            ServiceDetail serviceDetail = null;
+            try
+            {
+                 serviceDetail = await unitOfWork.Repository<ServiceDetail>().FindByIdAsync(Convert.ToInt32(id.Remove(0, 1)));
+            }
+            catch
+            {
+                return Json(new { Success = false, jsid = id });
+            }
             //if (amodel.Autos.Count > 0)
             //    return Json(new { Success = false, jsid = id.Remove(0, 1), errmsg = "Видаліть спочатку автомобілі цієї моделі", models = amodel.Autos.Select(x => $"{x.Model.Brand.Name} {x.Model.Name} {x.YearOfManufacture}") });
-            await unitOfWork.Repository<ServiceDetail>().RemoveAsync(serviceDetail);
-            await unitOfWork.SaveAsync();
+            if (serviceDetail != null)
+            {
+                await unitOfWork.Repository<ServiceDetail>().RemoveAsync(serviceDetail);
+                await unitOfWork.SaveAsync();
+            }
 
             return Json(new { Success = true, jsid = id });
         }
@@ -383,8 +401,8 @@ namespace AutoDem.Controllers
                 var tmp = new AdminAutosListViewModel()
                 {
                     IdAuto = auto.Id,
-                    Name = $"{auto.Model.Brand.Name} {auto.Model.Name} {auto.YearOfManufacture}",
-                    PathToPhoto = auto.PhotoAutos.Count > 0 ? auto.PhotoAutos[0].PathToPhoto : "/images/Autos/empty.jpg"
+                    Name = $"{auto.Model?.Brand?.Name} {auto.Model?.Name} {auto.YearOfManufacture}",
+                    PathToPhoto = auto.PhotoAutos?.Count > 0 ? auto.PhotoAutos[0].PathToPhoto : "/images/Autos/empty.jpg"
                 };
                 model.Add(tmp);
             }
@@ -417,10 +435,10 @@ namespace AutoDem.Controllers
                 await unitOfWork.SaveAsync();
             }
 
-            var autoBrand = await unitOfWork.Repository<Brand>().FindByIdAsync(auto.Model.Brand.Id);
+            var autoBrand = await unitOfWork.Repository<Brand>().FindByIdAsync(auto.Model?.Brand?.Id);
 
             var allBrandes = await unitOfWork.Repository<Brand>().GetAllAsync();
-            var allModels = (await unitOfWork.Repository<Brand>().FindByIdAsync(autoBrand.Id)).Models;
+            var allModels = (await unitOfWork.Repository<Brand>().FindByIdAsync(autoBrand?.Id))?.Models;
             var allTypes = await unitOfWork.Repository<TypeAuto>().GetAllAsync();
             var allFuelTypes = await unitOfWork.Repository<FuelType>().GetAllAsync();
             var allAdditionalOptions = await unitOfWork.Repository<AdditionalOption>().GetAllAsync();
@@ -429,31 +447,38 @@ namespace AutoDem.Controllers
             //шлях до фотографії береться з БД -> з першої фотки автомобіля
             string dir = auto.PhotoAutos.Count>0? Path.Combine(Server.MapPath(Path.GetDirectoryName(auto.PhotoAutos[0].PathToPhoto))):null;
 
-            AdminEditAutoViewModel autoEditViewModel = new AdminEditAutoViewModel() {
-                 AutoId = auto.Id,
-                 Color = auto.Color,
-                 DatePublication = auto.DatePublication,
-                 Description = auto.Description,
-                 Drive = auto.Drive,
-                 EngineCapacity = auto.EngineCapacity,
-                 Mileage = auto.Mileage,
-                 Price = auto.Price,
-                 SoldOut = auto.SoldOut,
-                 Transmission = auto.Transmission,
-                 YearOfManufacture = auto.YearOfManufacture,
-                 Brandes =  new List<SelectListItem>(allBrandes.Select(item => new SelectListItem() { Selected = (item.Id == autoBrand.Id) ? true : false, Text = item.Name, Value = item.Id.ToString() })),
-                 Models =  new List<SelectListItem>(allModels.Select(item => new SelectListItem() { Selected = (item.Id == auto.Model.Id) ? true : false, Text = item.Name, Value = item.Id.ToString() })),
-                 Types =  new List<SelectListItem>(allTypes.Select(item => new SelectListItem() { Selected = (item.Id == auto.Type.Id) ? true : false, Text = item.Name, Value = item.Id.ToString() })),
-                 FuelTypes =  new List<SelectListItem>(allFuelTypes.Select(item => new SelectListItem() { Selected = (item.Id == auto.FuelType.Id) ? true : false, Text = item.Name, Value = item.Id.ToString() })),
-                 Countires =  new List<SelectListItem>(allCountires.Select(item => new SelectListItem() { Selected = (item.Id == auto.Country.Id) ? true : false, Text = item.Name, Value = item.Id.ToString() })),
-                 AdditionalOptions = new List<VendorAssistanceViewModel>(),
-                 PathToPhotos = new List<string>(),
-                 Brand = auto.Model.Brand.Id.ToString(),
-                 Country = auto.Country.Id.ToString(),
-                 FuelType = auto.FuelType.Id.ToString(),
-                 Model = auto.Model.Id.ToString(),
-                 Type = auto.Model.Id.ToString()
-            };
+            AdminEditAutoViewModel autoEditViewModel = new AdminEditAutoViewModel();
+            autoEditViewModel.AutoId = auto.Id;
+            autoEditViewModel.Color = auto.Color;
+            autoEditViewModel.DatePublication = auto.DatePublication != null ? auto.DatePublication : DateTime.Now;
+            autoEditViewModel.Description = auto.Description;
+            autoEditViewModel.Drive = auto.Drive;
+            autoEditViewModel.EngineCapacity = auto.EngineCapacity;
+            autoEditViewModel.Mileage = auto.Mileage;
+            autoEditViewModel.Price = auto.Price;
+            autoEditViewModel.SoldOut = auto.SoldOut;
+            autoEditViewModel.Transmission = auto.Transmission;
+            autoEditViewModel.YearOfManufacture = auto.YearOfManufacture;
+            autoEditViewModel.PathToPhotos = new List<string>();
+            autoEditViewModel.Brand = auto.Model?.Brand?.Id.ToString();
+            autoEditViewModel.Country = auto.Country?.Id.ToString();
+            autoEditViewModel.FuelType = auto.FuelType?.Id.ToString();
+            autoEditViewModel.Model = auto.Model?.Id.ToString();
+            autoEditViewModel.Type = auto.Model?.Id.ToString();
+            autoEditViewModel.AdditionalOptions = new List<VendorAssistanceViewModel>();
+            autoEditViewModel.Brandes = allBrandes?.Count() < 1 ? new List<SelectListItem>() : new List<SelectListItem>(allBrandes.Select(item => new SelectListItem() { Selected = (item.Id == (autoBrand != null ? autoBrand.Id : 0)) ? true : false, Text = item.Name, Value = item.Id.ToString() }));
+            autoEditViewModel.Types = allTypes?.Count() < 1 ? new List<SelectListItem>() : new List<SelectListItem>(allTypes.Select(item => new SelectListItem() { Selected = (item.Id == (auto.Type != null ? auto.Type.Id : 0)) ? true : false, Text = item.Name, Value = item.Id.ToString() }));
+            autoEditViewModel.FuelTypes = allFuelTypes?.Count() < 1 ? new List<SelectListItem>() : new List<SelectListItem>(allFuelTypes.Select(item => new SelectListItem() { Selected = (item.Id == (auto.FuelType != null ? auto.FuelType.Id : 0)) ? true : false, Text = item.Name, Value = item.Id.ToString() }));
+            autoEditViewModel.Countires = allCountires?.Count() < 1 ? new List<SelectListItem>() : new List<SelectListItem>(allCountires.Select(item => new SelectListItem() { Selected = (item.Id == (auto.Country != null ? auto.Country.Id : 0)) ? true : false, Text = item.Name, Value = item.Id.ToString() }));
+            if (allModels == null)
+            {
+                autoEditViewModel.Models = new List<SelectListItem>();
+            }
+            else
+            {
+                autoEditViewModel.Models = allModels?.Count() < 1 ? new List<SelectListItem>() : new List<SelectListItem>(allModels.Select(item => new SelectListItem() { Selected = (item.Id == (auto.Model != null ? auto.Model.Id : 0)) ? true : false, Text = item.Name, Value = item.Id.ToString() }));
+            }
+            
             foreach (var item in allAdditionalOptions)
             {
                 autoEditViewModel.AdditionalOptions.Add(new VendorAssistanceViewModel()
@@ -515,7 +540,7 @@ namespace AutoDem.Controllers
             //---End робота із фотографіями
 
             auto.Color = autoEditViewModel.Color;
-            auto.DatePublication = autoEditViewModel.DatePublication;
+            auto.DatePublication = autoEditViewModel.DatePublication != null ? autoEditViewModel.DatePublication : DateTime.Now;
             auto.Description = autoEditViewModel.Description;
             auto.Drive = autoEditViewModel.Drive;
             auto.EngineCapacity = autoEditViewModel.EngineCapacity;
@@ -530,8 +555,8 @@ namespace AutoDem.Controllers
             //якщо змінили модель або бренд або рік то будемо міняти назву папки для картинок і інормацію по картинках в БД
             if (auto.Model.Name != aModel.Name || auto.Model.Brand.Name != aBrand.Name || auto.YearOfManufacture != autoEditViewModel.YearOfManufacture)
             {
-                var oldFolderName = $"{auto.Model.Brand.Name}_{auto.Model.Name}{auto.YearOfManufacture}_{auto.Id}";
-                var newFolderName = $"{aBrand.Name}_{aModel.Name}{autoEditViewModel.YearOfManufacture}_{auto.Id}";
+                var oldFolderName = $"{auto.Model?.Brand?.Name}_{auto.Model?.Name}{auto.YearOfManufacture}_{auto?.Id}";
+                var newFolderName = $"{aBrand?.Name}_{aModel?.Name}{autoEditViewModel.YearOfManufacture}_{auto?.Id}";
                 if (System.IO.Directory.Exists(Server.MapPath($"~/Images/Autos/{oldFolderName}")))
                 {
                     System.IO.Directory.Move(Server.MapPath($"~/Images/Autos/{oldFolderName}"), Server.MapPath($"~/Images/Autos/{newFolderName}"));
@@ -619,7 +644,7 @@ namespace AutoDem.Controllers
             await unitOfWork.SaveAsync();
 
             DirectoryInfo dir = Directory.CreateDirectory(Path.Combine(Server.MapPath("~/Images/Autos/"), 
-                $"{auto.Model.Brand.Name}_{auto.Model.Name}{auto.YearOfManufacture}_{auto.Id}"));
+                $"{auto.Model?.Brand?.Name}_{auto.Model?.Name}{auto.YearOfManufacture}_{auto.Id}"));
 
             foreach (var item in file)
             {
@@ -989,12 +1014,15 @@ namespace AutoDem.Controllers
 
             foreach (var m in models)
             {
-                model.Models.Add(new AdminModelViewModel()
+                if (m.Brand != null)
                 {
-                    IdModel = m.Id,
-                    BrandId = m.Brand.Id,
-                    Name = m.Name
-                });
+                    model.Models.Add(new AdminModelViewModel()
+                    {
+                        IdModel = m.Id,
+                        BrandId = m.Brand.Id,
+                        Name = m.Name
+                    });
+                }
             }
 
             return View(model);
@@ -1062,7 +1090,7 @@ namespace AutoDem.Controllers
                 var tmp = new AdminCommentViewModel()
                 {
                     IdAuto = auto.Id,
-                    Name = $"{auto.Model.Brand.Name} {auto.Model.Name} {auto.YearOfManufacture}",
+                    Name = $"{auto.Model?.Brand?.Name} {auto.Model?.Name} {auto.YearOfManufacture}",
                     PathToPhoto = auto.PhotoAutos[0].PathToPhoto,
                     Comments = new List<Comment>()
                 };
@@ -1088,7 +1116,7 @@ namespace AutoDem.Controllers
                     Id = item.Id,
                     AuthorFName = item.AuthorFName,
                     AuthorLName = item.AuthorLName,
-                   // Body = item.Body,
+                    //Body = item.Body,
                     Email = item.Email,
                     Phone = item.Phone,
                     DateTime = item.DateTime,

@@ -33,7 +33,7 @@
                     <div class="col-md-12 mt-text text-center animate-box" data-animate-effect="fadeInUp">
                         <h1>We Build <strong>Branded Platforms</strong></h1>
                         <h2>Far far away, behind the word mountains, far from the countries Vokalia.</h2>
-                        <div class="text-center">@Html.ActionLink("Автомобілі", "Index", "Autos", new { @class = "btn btn-primary btn-lg popup-vimeo" })</div>
+                        <div class="text-center">@Html.ActionLink("Автомобілі", "Index", "Autos",null ,  new { @class = "btn btn-primary btn-lg" })</div>
                     </div>
                 </div>
             </div>
@@ -53,11 +53,28 @@
                             @*<p>Послуги які ми надаємо</p>*@
                         </div>
                     </div>
-                    <div class="row">
+                   @if(Model.LastAutos.Count>0)
+                   {
+                      @Html.Raw("<div class=\"row\">")
+                   }
                         @for (int i = 0; i < Model.LastAutos.Count; i++)
                         {
+
+                            if (i % 3 == 0)
+                            {
+                                if (i != 0)
+                                {
+                                   @Html.Raw("</div>")
+                                }
+                                if (Model.LastAutos.Count != i + 1 && i!=0)
+                                {
+                                @Html.Raw("<div class=\"row\">")
+                                }
+                            }
+
+
                         <div class="col-lg-4 col-md-4 col-sm-6">
-                            <a href="@(Url.Action("Details", "Autos", new {id = Model.LastAutos[i].Id}))" class="gtco-card-item">
+                            <a href="@(Url.Action("Details", "Autos", new { id = Model.LastAutos[i].Id }))" class="gtco-card-item">
                                 <figure>
                                     <div class="overlay"><i class="ti-plus"></i></div>
                                     <img src="@Model.LastAutos[i].PathToPhoto" alt="Image" class="img-responsive">
@@ -69,8 +86,13 @@
                                 </div>
                             </a>
                         </div>
+                            if (i % 3 == 0 && i%2!=0)
+                            {
+                                @Html.Raw("</div>")  
+
+                            }
                         }
-                    </div>
+
                 </div>
             </div>
 
