@@ -15,6 +15,10 @@ namespace AutoDem.Controllers
 {
     public class AutosController : Controller
     {
+        public AutosController()
+        {
+            this.ViewData["MainLayoutViewModel"] = db.Repository<Service>().GetAll()?.Select(x => x.Title).ToList();
+        }
         private GenericUnitOfWork db = new GenericUnitOfWork();
 
         // GET: Autos
@@ -64,7 +68,7 @@ namespace AutoDem.Controllers
                 {
                     Id = x.Id,
                     Name = $"{x.Model.Brand?.Name}  {x.Model?.Name} {x.YearOfManufacture}",
-                    PathToPhotos = x.PhotoAutos?.Count >= 2 ? x.PhotoAutos.Select(path => path.PathToPhoto).Take(2).ToList() : new List<string>(new string[] { x.PhotoAutos[0].PathToPhoto, x.PhotoAutos[0].PathToPhoto }),
+                    PathToPhotos = x.PhotoAutos.Count == 0 ? new List<string>(new string[] { "/images/Autos/empty.jpg", "/images/Autos/empty.jpg" }) : x.PhotoAutos?.Count >= 2 ? x.PhotoAutos.Select(path => path.PathToPhoto).Take(2).ToList() : new List<string>(new string[] { x.PhotoAutos[0].PathToPhoto, x.PhotoAutos[0].PathToPhoto }),
                     Price = x.Price
                 });
 
@@ -80,7 +84,7 @@ namespace AutoDem.Controllers
                 {
                     Id = x.Id,
                     Name = $"{x.Model.Brand?.Name}  {x.Model?.Name} {x.YearOfManufacture}",
-                    PathToPhotos = x.PhotoAutos?.Count >= 2 ? x.PhotoAutos.Select(path => path.PathToPhoto).Take(2).ToList() : new List<string>(new string[] { x.PhotoAutos[0].PathToPhoto, x.PhotoAutos[0].PathToPhoto }),
+                    PathToPhotos = x.PhotoAutos.Count == 0? new List<string>(new string[] { "/images/Autos/empty.jpg", "/images/Autos/empty.jpg" }) :  x.PhotoAutos?.Count >= 2 ? x.PhotoAutos.Select(path => path.PathToPhoto).Take(2).ToList() : new List<string>(new string[] { x.PhotoAutos[0].PathToPhoto, x.PhotoAutos[0].PathToPhoto }),
                     Price = x.Price
                 });
             }

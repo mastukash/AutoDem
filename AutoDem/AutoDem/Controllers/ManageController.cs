@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using AutoDem.Models;
+using AutoDem.DAL;
 
 namespace AutoDem.Controllers
 {
@@ -16,8 +17,11 @@ namespace AutoDem.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
+        private GenericUnitOfWork db = new GenericUnitOfWork();
+
         public ManageController()
         {
+            this.ViewData["MainLayoutViewModel"] = db.Repository<Service>().GetAll()?.Select(x => x.Title).ToList();
         }
 
         public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)

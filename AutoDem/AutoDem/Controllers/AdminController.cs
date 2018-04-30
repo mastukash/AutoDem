@@ -513,6 +513,7 @@ namespace AutoDem.Controllers
             bool b = false;
             for(int i=0;i<file.Length;i++)
             {
+ 
                 //видалення фотографії - це окремий пост запит до сервера із в'ю
                 if (file[i] == null)
                     continue;

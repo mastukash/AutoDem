@@ -21,10 +21,8 @@
                         </div>
                         <div class="col-md-6 col-xs-6 social-icons">
                             <ul class="gtco-social-top">
-                                <li><a href="#"><i class="icon-facebook"></i></a></li>
-                                <li><a href="#"><i class="icon-twitter"></i></a></li>
-                                <li><a href="#"><i class="icon-linkedin"></i></a></li>
-                                <li><a href="#"><i class="icon-instagram"></i></a></li>
+                                <li><a href="https://www.facebook.com/100017193852456"><i class="icon-facebook"></i></a></li>
+                                <li><a href="https://www.instagram.com/vadim_demian"><i class="icon-instagram"></i></a></li>
                             </ul>
                         </div>
 
@@ -64,25 +62,27 @@
                         </div>
                         <div class="col-md-4 col-md-push-1">
                             <div class="gtco-widget">
-                                <h3>Services</h3>
+                                <h3>Послуги</h3>
+                                @{
+        var viewModel = ViewBag.MainLayoutViewModel;
+                                }
                                 <ul class="gtco-footer-links">
-                                    <li><a href="#">Data Analytics</a></li>
-                                    <li><a href="#">Web Development</a></li>
-                                    <li><a href="#">Branding &amp; Identity</a></li>
-                                    <li><a href="#">eCommerce Development</a></li>
-                                    <li><a href="#">Design &amp; UX</a></li>
-                                    <li><a href="#">Strategt</a></li>
+                                    @for (int i = 0; i < viewModel.Count; i++)
+        {
+                            <li><a href="#">@viewModel[i]</a></li>
+}
                                 </ul>
                             </div>
                         </div>
 
                         <div class="col-md-3 col-md-push-1">
                             <div class="gtco-widget">
-                                <h3>Get In Touch</h3>
+                                <h3>Контакти:</h3>
                                 <ul class="gtco-quick-contact">
-                                    <li><a href="#"><i class="icon-phone"></i> +1 234 567 890</a></li>
-                                    <li><a href="#"><i class="icon-mail2"></i> info@GetTemplates.co</a></li>
-                                    <li><a href="#"><i class="icon-chat"></i> Live Chat</a></li>
+                                    <li><a href="#"><i class="icon-phone"></i> +38 067 747 67 76</a></li>
+                                    <li><a href="#"><i class="icon-phone"></i> +38 063 158 11 15</a></li>
+                                    <li><a href="#"><i class="icon-phone"></i> +49 157 8808 9230</a></li>
+                                    <li><a href="#"><i class="icon-mail2"></i> m-demjan@ukr.net</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -90,15 +90,13 @@
                     <div class="row copyright">
                         <div class="col-md-12">
                             <p class="pull-left">
-                                <small class="block">&copy; 2016 Free HTML5. All Rights Reserved.</small>
-                                <small class="block">Designed by <a href="http://GetTemplates.co/" target="_blank">GetTemplates.co</a> Demo Images: <a href="http://unsplash.com/" target="_blank">Unsplash</a></small>
+                                <small class="block">© @DateTime.Now.Year. All Rights Reserved.</small>
+                                <small class="block">Designed by BrilliantBrains</small>
                             </p>
                             <p class="pull-right">
                                 <ul class="gtco-social-icons pull-right">
-                                    <li><a href="#"><i class="icon-twitter"></i></a></li>
-                                    <li><a href="#"><i class="icon-facebook"></i></a></li>
-                                    <li><a href="#"><i class="icon-linkedin"></i></a></li>
-                                    <li><a href="#"><i class="icon-dribbble"></i></a></li>
+                                    <li><a href="https://www.facebook.com/100017193852456"><i class="icon-facebook"></i></a></li>
+                                    <li><a href="https://www.instagram.com/vadim_demian"><i class="icon-instagram"></i></a></li>
                                 </ul>
                             </p>
                         </div>

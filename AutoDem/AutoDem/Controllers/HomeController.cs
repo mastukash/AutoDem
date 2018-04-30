@@ -13,6 +13,10 @@ namespace AutoDem.Controllers
 {
     public class HomeController : Controller
     {
+        public HomeController()
+        {
+            this.ViewData["MainLayoutViewModel"] = db.Repository<Service>().GetAll()?.Select(x => x.Title).ToList();
+        }
         GenericUnitOfWork db = new GenericUnitOfWork();
         public async Task<ActionResult> Index()
         {
